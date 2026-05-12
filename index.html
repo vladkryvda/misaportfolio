@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>misa — Portfolio</title>
+    <title>misa — Level Designer & 3D Artist</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+
     <style>
         :root {
             --bg: #0a0a0c;
@@ -14,33 +17,62 @@
             --text: #ffffff;
             --text-dim: rgba(255, 255, 255, 0.6);
             --border: rgba(255, 255, 255, 0.08);
+            --transition: all 0.4s cubic-bezier(0.2, 1, 0.3, 1);
         }
+
         * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
-        body { background: var(--bg); color: var(--text); font-family: 'Outfit', sans-serif; line-height: 1.6; }
-        
-        /* Cursor */
+        body { background: var(--bg); color: var(--text); font-family: 'Outfit', sans-serif; overflow-x: hidden; line-height: 1.6; scroll-behavior: smooth; }
+
+        /* Custom Cursor */
         #cursor-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); }
         #cursor-outline { width: 40px; height: 40px; border: 1px solid var(--accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: all 0.15s ease-out; opacity: 0.5; }
 
+        /* Navigation */
         nav { position: fixed; top: 0; width: 100%; height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 50px; background: rgba(10, 10, 12, 0.8); backdrop-filter: blur(10px); z-index: 100; border-bottom: 1px solid var(--border); }
         .logo { font-family: 'Syne'; font-weight: 800; font-size: 1.5rem; }
         .logo span { color: var(--accent); }
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
+        .nav-links a:hover { color: var(--accent); }
 
+        /* Hero Section */
         .hero { min-height: 100vh; display: grid; grid-template-columns: 1.2fr 0.8fr; align-items: center; padding: 0 10%; gap: 50px; }
         .hero h1 { font-family: 'Syne'; font-size: clamp(3rem, 8vw, 5.5rem); line-height: 0.9; text-transform: uppercase; }
-        model-viewer { width: 100%; height: 500px; }
+        .hero span { color: var(--accent); }
+        model-viewer { width: 100%; height: 500px; background: transparent; }
 
-        .section-header { padding: 100px 10% 20px; text-align: center; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; padding: 20px 10% 100px; }
+        /* Projects Grid */
+        .section-title { font-family: 'Syne'; font-size: 3.5rem; text-align: center; margin: 100px 0 50px; text-transform: uppercase; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 30px; padding: 0 10% 100px; }
         
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 15px; overflow: hidden; transition: 0.4s; }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; transition: var(--transition); display: flex; flex-direction: column; }
         .card:hover { transform: translateY(-10px); border-color: var(--accent); }
-        .card-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; }
-        .card-content { padding: 20px; }
-        .card h3 { font-family: 'Syne'; margin-bottom: 10px; font-size: 1.2rem; }
-        .btn-play { display: inline-block; padding: 8px 20px; background: var(--accent); color: var(--bg); text-decoration: none; font-weight: 700; border-radius: 5px; font-size: 14px; }
+        .card-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-bottom: 1px solid var(--border); }
+        .card-content { padding: 25px; }
+        .card h3 { font-family: 'Syne'; font-size: 1.4rem; margin-bottom: 10px; }
+        .card p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 20px; }
+        
+        .btn-play { display: inline-block; padding: 12px 28px; background: var(--accent); color: var(--bg); text-decoration: none; font-weight: 700; border-radius: 8px; transition: 0.3s; font-size: 0.9rem; }
+        .btn-play:hover { transform: scale(1.05); background: #fff; }
 
-        @media (max-width: 900px) { .hero { grid-template-columns: 1fr; text-align: center; padding-top: 100px; } }
+        /* Reviews */
+        .reviews { background: #0c0c0e; padding: 100px 10%; border-top: 1px solid var(--border); }
+        .review-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .rev-card { padding: 40px; background: var(--surface); border-radius: 15px; border-left: 4px solid var(--accent); }
+        .rev-card p { font-style: italic; color: var(--text-dim); margin-bottom: 20px; }
+        .rev-author { font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.8rem; }
+
+        /* Contact */
+        .contact { padding: 150px 10%; text-align: center; }
+        .contact h2 { font-family: 'Syne'; font-size: clamp(2rem, 5vw, 4rem); margin-bottom: 30px; }
+        .contact-link { font-family: 'Syne'; font-size: 1.5rem; color: var(--text); text-decoration: none; border-bottom: 2px solid var(--accent); transition: 0.3s; }
+        .contact-link:hover { color: var(--accent); }
+
+        @media (max-width: 900px) {
+            .hero { grid-template-columns: 1fr; text-align: center; padding-top: 100px; }
+            .nav-links { display: none; }
+            .grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -50,49 +82,115 @@
 
 <nav>
     <div class="logo">MISA<span>.</span></div>
+    <div class="nav-links">
+        <a href="#work">Work</a>
+        <a href="#reviews">Reviews</a>
+        <a href="#contact">Contact</a>
+    </div>
 </nav>
 
 <section class="hero">
     <div>
+        <p style="color: var(--accent); letter-spacing: 4px; font-weight: 600; text-transform: uppercase; margin-bottom: 15px;">Available for Hire</p>
         <h1>Level <br><span>Designer</span></h1>
-        <p style="color: var(--text-dim); margin: 20px 0 30px;">Professional environment artist specializing in Roblox and high-fidelity 3D worlds.</p>
-        <a href="#projects" class="btn-play" style="padding: 15px 40px;">View My Work</a>
+        <p>Creating immersive 3D environments and high-performance Roblox maps. Expert in lighting, composition, and world-building.</p>
+        <a href="#work" class="btn-play" style="margin-top: 20px; padding: 18px 45px;">Explore Portfolio</a>
     </div>
-    <model-viewer src="https://modelviewer.dev/shared-assets/models/Astronaut.glb" auto-rotate camera-controls shadow-intensity="1"></model-viewer>
+    <model-viewer src="https://modelviewer.dev/shared-assets/models/Astronaut.glb" auto-rotate camera-controls shadow-intensity="1" disable-zoom></model-viewer>
 </section>
 
-<div class="section-header" id="projects">
-    <h2 style="font-family: 'Syne'; font-size: 3rem;">PORTFOLIO</h2>
-</div>
+<h2 class="section-title" id="work">Selected Projects</h2>
 
 <div class="grid">
-    <!-- Картки генеруються на основі ваших файлів .jpeg -->
-    <div class="card"><img src="JPEG image-46A0-A371-58-0.jpeg" class="card-img"><div class="card-content"><h3>Lunar Sanctuary</h3><a href="#" class="btn-play">View Project</a></div></div>
-    <div class="card"><img src="JPEG image-46A0-A371-58-1.jpeg" class="card-img"><div class="card-content"><h3>Emerald Forest</h3><a href="#" class="btn-play">View Project</a></div></div>
-    <div class="card"><img src="JPEG image-46A0-A371-58-2.jpeg" class="card-img"><div class="card-content"><h3>Imperial Arena</h3><a href="#" class="btn-play">View Project</a></div></div>
-    <div class="card"><img src="JPEG image-46A0-A371-58-3.jpeg" class="card-img"><div class="card-content"><h3>Ancient Gate</h3><a href="#" class="btn-play">View Project</a></div></div>
-    <div class="card"><img src="JPEG image-46A0-A371-58-4.jpeg" class="card-img"><div class="card-content"><h3>Skyline Hub</h3><a href="#" class="btn-play">View Project</a></div></div>
-    <div class="card"><img src="JPEG image-46A0-A371-58-5.jpeg" class="card-img"><div class="card-content"><h3>Bayside Lake</h3><a href="#" class="btn-play">View Project</a></div></div>
-    <div class="card"><img src="JPEG image-46A0-A371-58-6.jpeg" class="card-img"><div class="card-content"><h3>Temple of Light</h3><a href="#" class="btn-play">View Project</a></div></div>
-    <div class="card"><img src="JPEG image-46A0-A371-58-7.jpeg" class="card-img"><div class="card-content"><h3>The Void Bridge</h3><a href="#" class="btn-play">View Project</a></div></div>
-    <div class="card"><img src="JPEG image-46A0-A371-58-8.jpeg" class="card-img"><div class="card-content"><h3>Sunset Valley</h3><a href="#" class="btn-play">View Project</a></div></div>
-    <div class="card"><img src="JPEG image-46A0-A371-58-9.jpeg" class="card-img"><div class="card-content"><h3>Cliffside Village</h3><a href="#" class="btn-play">View Project</a></div></div>
-    <div class="card"><img src="JPEG image-46A0-A371-58-10.jpeg" class="card-img"><div class="card-content"><h3>Neon Streets</h3><a href="#" class="btn-play">View Project</a></div></div>
-    <div class="card"><img src="JPEG image-46A0-A371-58-11.jpeg" class="card-img"><div class="card-content"><h3>Windmill Castle</h3><a href="#" class="btn-play">View Project</a></div></div>
-    <div class="card"><img src="JPEG image-46A0-A371-58-12.jpeg" class="card-img"><div class="card-content"><h3>Frozen Keep</h3><a href="#" class="btn-play">View Project</a></div></div>
-    <div class="card"><img src="JPEG image-46A0-A371-58-13.jpeg" class="card-img"><div class="card-content"><h3>Desert Outpost</h3><a href="#" class="btn-play">View Project</a></div></div>
-    <div class="card"><img src="JPEG image-46A0-A371-58-14.jpeg" class="card-img"><div class="card-content"><h3>Guardian Statues</h3><a href="#" class="btn-play">View Project</a></div></div>
-    <div class="card"><img src="JPEG image-46A0-A371-58-15.jpeg" class="card-img"><div class="card-content"><h3>Crystal Cave</h3><a href="#" class="btn-play">View Project</a></div></div>
-    <div class="card"><img src="JPEG image-46A0-A371-58-16.jpeg" class="card-img"><div class="card-content"><h3>Shadow Fortress</h3><a href="#" class="btn-play">View Project</a></div></div>
+    <!-- Зображення підключені згідно з вашим списком файлів на GitHub -->
+    <div class="card">
+        <img src="JPEG image-46A0-A371-58-2.jpeg" class="card-img">
+        <div class="card-content">
+            <h3>Imperial Arena</h3>
+            <p>A grand gladiatorial colosseum with optimized low-poly geometry and cinematic torch lighting.</p>
+            <a href="#" class="btn-play">Open Experience</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <img src="JPEG image-46A0-A371-58-7.jpeg" class="card-img">
+        <div class="card-content">
+            <h3>Void Crossing</h3>
+            <p>Atmospheric bridge environment featuring floating islands and complex environmental storytelling.</p>
+            <a href="#" class="btn-play">Open Experience</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <img src="JPEG image-46A0-A371-58-0.jpeg" class="card-img">
+        <div class="card-content">
+            <h3>Lunar Village</h3>
+            <p>Eastern-inspired architecture set under a cosmic sky with custom neon shaders.</p>
+            <a href="#" class="btn-play">Open Experience</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <img src="JPEG image-46A0-A371-58-11.jpeg" class="card-img">
+        <div class="card-content">
+            <h3>Kingdom Keep</h3>
+            <p>Medieval fortification design with custom windmills and procedural terrain decoration.</p>
+            <a href="#" class="btn-play">Open Experience</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <img src="JPEG image-46A0-A371-58-5.jpeg" class="card-img">
+        <div class="card-content">
+            <h3>Bay City Skyline</h3>
+            <p>Clean, stylized urban landscape bordering a reflective water body. Mobile-optimized.</p>
+            <a href="#" class="btn-play">Open Experience</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <img src="JPEG image-46A0-A371-58-14.jpeg" class="card-img">
+        <div class="card-content">
+            <h3>Ancient Guardians</h3>
+            <p>Massive monolithic statues acting as landmarks and guiding players through the level.</p>
+            <a href="#" class="btn-play">Open Experience</a>
+        </div>
+    </div>
 </div>
+
+<section class="reviews" id="reviews">
+    <h2 class="section-title" style="margin-top: 0;">Client Feedback</h2>
+    <div class="review-grid">
+        <div class="rev-card">
+            <p>"Phenomenal lighting and sense of scale. Misa delivered a map that far exceeded our expectations for performance."</p>
+            <div class="rev-author">— Studio Lead, Void Devs</div>
+        </div>
+        <div class="rev-card">
+            <p>"Highly creative world-builder. The level flow is perfect for our gameplay mechanics. Highly recommend!"</p>
+            <div class="rev-author">— Independent Producer</div>
+        </div>
+    </div>
+</section>
+
+<section class="contact" id="contact">
+    <h2>Ready to start <br><span>a project?</span></h2>
+    <p style="margin-bottom: 40px; color: var(--text-dim);">I'm currently accepting new commissions and studio roles.</p>
+    <a href="mailto:hello@misa.art" class="contact-link">hello@misa.art</a>
+</section>
 
 <script>
     const dot = document.getElementById('cursor-dot');
     const outline = document.getElementById('cursor-outline');
+
     window.addEventListener('mousemove', (e) => {
         dot.style.left = e.clientX + 'px';
         dot.style.top = e.clientY + 'px';
         outline.animate({ left: `${e.clientX}px`, top: `${e.clientY}px` }, { duration: 400, fill: "forwards" });
+    });
+
+    document.querySelectorAll('a, button, .card').forEach(item => {
+        item.addEventListener('mouseenter', () => outline.style.transform = 'translate(-50%, -50%) scale(1.5)');
+        item.addEventListener('mouseleave', () => outline.style.transform = 'translate(-50%, -50%) scale(1)');
     });
 </script>
 
