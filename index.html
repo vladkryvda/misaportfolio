@@ -75,7 +75,7 @@
     }
     
     /* Project Cards Hover Glow */
-    .project-card:hover { border-color: #4ade80; transform: translateY(-8px); }
+    .project-card:hover { border-color: #5865F2; transform: translateY(-8px); }
   </style>
 
   <script>
@@ -89,7 +89,7 @@
               border: '#2a2a2e',
               text: '#e2e2e2',
               'text-dim': '#a0a0a5',
-              accent: '#4ade80' /* Updated to emerald green */
+              accent: '#5865F2' /* Discord purple */
             }
           }
         }
@@ -180,11 +180,11 @@
     
     <div class="w-full h-[400px] md:h-[500px] relative z-0">
       <!-- 
-        ТУТ ЗМІНЕНО ПОСИЛАННЯ НА ВАЗОНОК! 
-        Завантажте свій файл flowerpot.glb у папку images.
+        ТУТ ВИКОРИСТАНО ПОСИЛАННЯ НА МОДЕЛЬ З ІНТЕРНЕТУ ДЛЯ ТОГО, ЩОБ ВОНО ПРАЦЮВАЛО В ПРЕВ'Ю.
+        ПЕРЕД ТИМ ЯК ВИТЯГУВАТИ НА GITHUB, ЗМІНІТЬ src НА: "images/flowerpot.glb"
       -->
       <model-viewer 
-        src="images/tank.glb"
+        src="https://raw.githubusercontent.com/mrdoob/three.js/master/examples/models/gltf/Flower/Flower.glb"
         auto-rotate 
         camera-controls 
         shadow-intensity="1" 
@@ -271,73 +271,73 @@
         id: "imperial-arena",
         title: "Imperial Arena",
         description: "A grand gladiatorial colosseum with optimized low-poly geometry and cinematic torch lighting.",
-        thumb: "images/image-46A0-A371-58-2.jpeg",
+        thumb: "images/JPEG image-46A0-A371-58-2.jpeg",
         gallery: [
-          "images/image-46A0-A371-58-2.jpeg"
+          "images/JPEG image-46A0-A371-58-2.jpeg"
         ]
       },
       {
         id: "void-crossing",
         title: "Void Crossing",
         description: "Atmospheric environment featuring broken bridges and floating clock towers.",
-        thumb: "images/image-46A0-A371-58-7.jpeg",
+        thumb: "images/JPEG image-46A0-A371-58-7.jpeg",
         gallery: [
-          "images/image-46A0-A371-58-6.jpeg",
-          "images/image-46A0-A371-58-7.jpeg",
+          "images/JPEG image-46A0-A371-58-6.jpeg",
+          "images/JPEG image-46A0-A371-58-7.jpeg",
         ]
       },
       {
         id: "lunar-village",
         title: "Lunar Village",
         description: "Eastern-inspired architecture set under a cosmic sky with cherry blossom trees.",
-        thumb: "images/image-46A0-A371-58-0.jpeg",
+        thumb: "images/JPEG image-46A0-A371-58-0.jpeg",
         gallery: [
-          "images/image-46A0-A371-58-0.jpeg",
-          "images/image-46A0-A371-58-1.jpeg"
+          "images/JPEG image-46A0-A371-58-0.jpeg",
+          "images/JPEG image-46A0-A371-58-1.jpeg"
         ]
       },
       {
         id: "kingdom-keep",
         title: "Kingdom Keep",
         description: "Medieval fortification design with custom windmills, pink skies, and majestic castle halls.",
-        thumb: "images/image-46A0-A371-58-11.jpeg",
+        thumb: "images/JPEG image-46A0-A371-58-11.jpeg",
         gallery: [
-          "images/image-46A0-A371-58-11.jpeg",
-          "images/image-46A0-A371-58-12.jpeg",
-          "images/image-46A0-A371-58-13.jpeg"
+          "images/JPEG image-46A0-A371-58-11.jpeg",
+          "images/JPEG image-46A0-A371-58-12.jpeg",
+          "images/JPEG image-46A0-A371-58-13.jpeg"
         ]
       },
       {
         id: "bay-city-skyline",
         title: "Bay City Skyline",
         description: "Clean, stylized urban landscape featuring massive skyscrapers, banks, and an airport.",
-        thumb: "images/image-46A0-A371-58-5.jpeg",
+        thumb: "images/JPEG image-46A0-A371-58-5.jpeg",
         gallery: [
-          "images/image-46A0-A371-58-5.jpeg",
-          "images/image-46A0-A371-58-3.jpeg",
-          "images/image-46A0-A371-58-4.jpeg"
+          "images/JPEG image-46A0-A371-58-5.jpeg",
+          "images/JPEG image-46A0-A371-58-3.jpeg",
+          "images/JPEG image-46A0-A371-58-4.jpeg"
         ]
       },
       {
         id: "ancient-guardians",
         title: "Ancient Guardians",
         description: "Massive monolithic statues acting as landmarks and guiding players over ancient mossy bridges.",
-        thumb: "images/image-46A0-A371-58-14.jpeg",
+        thumb: "images/JPEG image-46A0-A371-58-14.jpeg",
         gallery: [
-          "images/image-46A0-A371-58-14.jpeg",
-          "images/image-46A0-A371-58-15.jpeg",
-          "images/image-46A0-A371-58-16.jpeg"
+          "images/JPEG image-46A0-A371-58-14.jpeg",
+          "images/JPEG image-46A0-A371-58-15.jpeg",
+          "images/JPEG image-46A0-A371-58-16.jpeg"
         ]
       },
       {
         id: "diverse-biomes",
         title: "Diverse Biomes",
         description: "Tropical coastal outposts, arid desert ruins, and lush green valleys designed for exploration.",
-        thumb: "images/image-46A0-A371-58-9.jpeg",
+        thumb: "images/JPEG image-46A0-A371-58-9.jpeg",
         gallery: [
-          "images/image-46A0-A371-58-9.jpeg",
-          "images/image-46A0-A371-58-10.jpeg",
-          "images/image-46A0-A371-58-8.jpeg"
+          "images/JPEG image-46A0-A371-58-9.jpeg",
+          "images/JPEG image-46A0-A371-58-10.jpeg",
+          "images/JPEG image-46A0-A371-58-8.jpeg"
         ]
       }
     ];
@@ -376,16 +376,27 @@
         projectsGrid.innerHTML += cardHTML;
       });
 
-      if (showAll || projects.length <= 3) {
+      if (projects.length <= 3) {
         showMoreContainer.style.display = 'none';
-        projectsGrid.classList.remove('pb-10');
-        projectsGrid.classList.add('pb-[100px]');
+      } else {
+        if (showAll) {
+          showMoreBtn.innerText = "Згорнути"; // Show Less / Collapse
+          projectsGrid.classList.remove('pb-10');
+          projectsGrid.classList.add('pb-[50px]');
+        } else {
+          showMoreBtn.innerText = "Show More";
+          projectsGrid.classList.remove('pb-[50px]');
+          projectsGrid.classList.add('pb-10');
+        }
       }
     }
 
     showMoreBtn.addEventListener('click', () => {
-      showAll = true;
+      showAll = !showAll;
       renderProjects();
+      if (!showAll) {
+        document.getElementById('work').scrollIntoView({ behavior: 'smooth' });
+      }
     });
 
     renderProjects();
@@ -512,3 +523,4 @@
   </script>
 </body>
 </html>
+
