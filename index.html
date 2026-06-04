@@ -1,198 +1,514 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>misa — Level Designer & 3D Artist</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MISA | Roblox Map Developer</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Inter:wght@400;500;600;700&display=swap');
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0c0c0e;
+      color: #e2e2e2;
+      cursor: none;
+      overflow-x: hidden;
+    }
+    
+    h1, h2, h3, .font-display {
+      font-family: 'Space Grotesk', sans-serif;
+    }
 
-    <style>
-        :root {
-            --bg: #0a0a0c;
-            --surface: #121215;
-            --accent: #c8d5e0;
-            --text: #ffffff;
-            --text-dim: rgba(255, 255, 255, 0.6);
-            --border: rgba(255, 255, 255, 0.08);
-            --transition: all 0.4s cubic-bezier(0.2, 1, 0.3, 1);
+    /* Custom Cursor */
+    .cursor-dot {
+      position: fixed; top: 0; left: 0;
+      width: 6px; height: 6px;
+      background-color: white;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: difference;
+      box-shadow: 0 0 10px 2px rgba(255,255,255,0.5);
+    }
+    .cursor-outline {
+      position: fixed; top: 0; left: 0;
+      width: 30px; height: 30px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: difference;
+      transition: width 0.15s ease-out, height 0.15s ease-out, background-color 0.15s ease-out, border-color 0.15s ease-out;
+    }
+    .cursor-outline.hovering {
+      width: 60px; height: 60px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .interactive-card {
+      cursor: none;
+    }
+    
+    /* Reveal Animation for Modal */
+    #gallery-modal {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    #gallery-modal.open {
+      opacity: 1;
+      visibility: visible;
+    }
+    #gallery-img {
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform: scale(0.95);
+    }
+    #gallery-modal.open #gallery-img {
+      transform: scale(1);
+    }
+    
+    /* Project Cards Hover Glow */
+    .project-card:hover { border-color: #4ade80; transform: translateY(-8px); }
+  </style>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              bg: '#0c0c0e',
+              surface: '#121214',
+              border: '#2a2a2e',
+              text: '#e2e2e2',
+              'text-dim': '#a0a0a5',
+              accent: '#4ade80' /* Updated to emerald green */
+            }
+          }
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
-        body { background: var(--bg); color: var(--text); font-family: 'Outfit', sans-serif; overflow-x: hidden; line-height: 1.6; scroll-behavior: smooth; }
-
-        /* Custom Cursor */
-        #cursor-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); }
-        #cursor-outline { width: 40px; height: 40px; border: 1px solid var(--accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: all 0.15s ease-out; opacity: 0.5; }
-
-        /* Navigation */
-        nav { position: fixed; top: 0; width: 100%; height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 50px; background: rgba(10, 10, 12, 0.8); backdrop-filter: blur(10px); z-index: 100; border-bottom: 1px solid var(--border); }
-        .logo { font-family: 'Syne'; font-weight: 800; font-size: 1.5rem; }
-        .logo span { color: var(--accent); }
-        .nav-links { display: flex; gap: 30px; }
-        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
-        .nav-links a:hover { color: var(--accent); }
-
-        /* Hero Section */
-        .hero { min-height: 100vh; display: grid; grid-template-columns: 1.2fr 0.8fr; align-items: center; padding: 0 10%; gap: 50px; }
-        .hero h1 { font-family: 'Syne'; font-size: clamp(3rem, 8vw, 5.5rem); line-height: 0.9; text-transform: uppercase; }
-        .hero span { color: var(--accent); }
-        model-viewer { width: 100%; height: 500px; background: transparent; }
-
-        /* Projects Grid */
-        .section-title { font-family: 'Syne'; font-size: 3.5rem; text-align: center; margin: 100px 0 50px; text-transform: uppercase; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 30px; padding: 0 10% 100px; }
-        
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; transition: var(--transition); display: flex; flex-direction: column; }
-        .card:hover { transform: translateY(-10px); border-color: var(--accent); }
-        .card-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-bottom: 1px solid var(--border); }
-        .card-content { padding: 25px; }
-        .card h3 { font-family: 'Syne'; font-size: 1.4rem; margin-bottom: 10px; }
-        .card p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 20px; }
-        
-        .btn-play { display: inline-block; padding: 12px 28px; background: var(--accent); color: var(--bg); text-decoration: none; font-weight: 700; border-radius: 8px; transition: 0.3s; font-size: 0.9rem; }
-        .btn-play:hover { transform: scale(1.05); background: #fff; }
-
-        /* Reviews */
-        .reviews { background: #0c0c0e; padding: 100px 10%; border-top: 1px solid var(--border); }
-        .review-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        .rev-card { padding: 40px; background: var(--surface); border-radius: 15px; border-left: 4px solid var(--accent); }
-        .rev-card p { font-style: italic; color: var(--text-dim); margin-bottom: 20px; }
-        .rev-author { font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.8rem; }
-
-        /* Contact */
-        .contact { padding: 150px 10%; text-align: center; }
-        .contact h2 { font-family: 'Syne'; font-size: clamp(2rem, 5vw, 4rem); margin-bottom: 30px; }
-        .contact-link { font-family: 'Syne'; font-size: 1.5rem; color: var(--text); text-decoration: none; border-bottom: 2px solid var(--accent); transition: 0.3s; }
-        .contact-link:hover { color: var(--accent); }
-
-        @media (max-width: 900px) {
-            .hero { grid-template-columns: 1fr; text-align: center; padding-top: 100px; }
-            .nav-links { display: none; }
-            .grid { grid-template-columns: 1fr; }
-        }
-    </style>
+      }
+    }
+  </script>
 </head>
-<body>
+<body class="relative min-h-screen text-brand-text font-sans antialiased">
+  
+  <!-- Custom Cursor Elements -->
+  <div class="cursor-dot" id="cursor-dot"></div>
+  <div class="cursor-outline" id="cursor-outline"></div>
 
-<div id="cursor-dot"></div>
-<div id="cursor-outline"></div>
+  <!-- Dynamic Background Ambient Glows -->
+  <div class="fixed inset-0 pointer-events-none z-[-1]">
+    <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:32px_32px]"></div>
+    <div class="absolute top-1/4 left-1/4 w-[40vw] h-[40vw] bg-brand-accent/5 rounded-full blur-[150px]"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-[40vw] h-[40vw] bg-[#5865F2]/5 rounded-full blur-[150px]"></div>
+  </div>
 
-<nav>
-    <div class="logo">MISA<span>.</span></div>
-    <div class="nav-links">
-        <a href="#work">Work</a>
-        <a href="#reviews">Reviews</a>
-        <a href="#contact">Contact</a>
+  <!-- Gallery Modal -->
+  <div id="gallery-modal" class="fixed inset-0 z-[1000] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 md:p-8">
+    <button id="modal-close" class="absolute top-6 right-6 text-white/60 hover:text-white transition-colors z-[1001] interactive-card">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+
+    <button id="modal-prev" class="absolute left-4 md:left-10 text-white/60 hover:text-white transition-transform hover:scale-110 z-[1001] interactive-card p-2 bg-black/40 rounded-full">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+
+    <div class="relative max-w-7xl max-h-[85vh] w-full flex justify-center items-center">
+      <img id="gallery-img" src="" alt="Gallery Image" class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl" />
+      <div id="gallery-counter" class="absolute -bottom-10 left-1/2 -translate-x-1/2 text-white/50 font-mono text-sm tracking-widest">
+        1 / 1
+      </div>
     </div>
-</nav>
+    
+    <button id="modal-next" class="absolute right-4 md:right-10 text-white/60 hover:text-white transition-transform hover:scale-110 z-[1001] interactive-card p-2 bg-black/40 rounded-full">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
+  </div>
 
-<section class="hero">
-    <div>
-        <p style="color: var(--accent); letter-spacing: 4px; font-weight: 600; text-transform: uppercase; margin-bottom: 15px;">Available for Hire</p>
-        <h1>Level <br><span>Designer</span></h1>
-        <p>Creating immersive 3D environments and high-performance Roblox maps. Expert in lighting, composition, and world-building.</p>
-        <a href="#work" class="btn-play" style="margin-top: 20px; padding: 18px 45px;">Explore Portfolio</a>
+  <!-- Navigation -->
+  <nav class="fixed top-0 w-full h-[70px] flex items-center justify-between px-6 md:px-[50px] bg-[#0c0c0e]/80 backdrop-blur-md z-[100] border-b border-brand-border">
+    <div class="font-display font-extrabold text-xl tracking-tight interactive-card">
+      MISA<span class="text-brand-accent">.</span>
     </div>
-    <model-viewer src="https://modelviewer.dev/shared-assets/models/Astronaut.glb" auto-rotate camera-controls shadow-intensity="1" disable-zoom></model-viewer>
-</section>
+    <div class="hidden md:flex gap-[30px]">
+      <a href="#work" class="text-brand-text-dim no-underline text-[13px] uppercase tracking-widest transition-colors duration-300 hover:text-brand-accent interactive-card">Work</a>
+      <a href="#reviews" class="text-brand-text-dim no-underline text-[13px] uppercase tracking-widest transition-colors duration-300 hover:text-brand-accent interactive-card">Reviews</a>
+      <a href="#contact" class="text-brand-text-dim no-underline text-[13px] uppercase tracking-widest transition-colors duration-300 hover:text-brand-accent interactive-card">Contact</a>
+    </div>
+  </nav>
 
-<h2 class="section-title" id="work">Selected Projects</h2>
-
-<div class="grid">
-    <!-- Зображення підключені згідно з вашим списком файлів на GitHub -->
-    <div class="card">
-        <img src="JPEG image-46A0-A371-58-2.jpeg" class="card-img">
-        <div class="card-content">
-            <h3>Imperial Arena</h3>
-            <p>A grand gladiatorial colosseum with optimized low-poly geometry and cinematic torch lighting.</p>
-            <a href="#" class="btn-play">Open Experience</a>
+  <!-- Hero Section -->
+  <section class="min-h-screen flex flex-col md:grid md:grid-cols-[1.2fr_0.8fr] items-center px-6 md:px-[10%] pt-[100px] md:pt-0 gap-[50px]">
+    <div class="text-center md:text-left z-10 w-full">
+      <p class="text-brand-accent tracking-[4px] font-semibold uppercase mb-[15px] text-sm md:text-base">
+        Available for Hire
+      </p>
+      <!-- Title size reduced per user request -->
+      <h1 class="font-display text-[clamp(2rem,4vw,3.5rem)] leading-[0.9] uppercase mb-6 drop-shadow-xl">
+        Roblox Map <br /><span class="text-brand-accent">Developer</span>
+      </h1>
+      <p class="text-brand-text-dim max-w-lg mx-auto md:mx-0 text-base md:text-lg mb-8">
+        Creating immersive 3D environments and high-performance Roblox maps. Expert in lighting, composition, and world-building.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4">
+        <a href="#work" class="inline-block py-3 px-7 md:py-4 md:px-[45px] bg-white text-brand-bg font-bold rounded-lg transition-transform duration-300 hover:scale-105 text-sm md:text-[0.9rem] interactive-card">
+          Explore Portfolio
+        </a>
+        
+        <!-- Discord Button -->
+        <div class="relative inline-block">
+          <button id="discord-btn" class="inline-flex items-center gap-3 py-3 px-7 md:py-4 md:px-[35px] bg-[#5865F2] text-white font-bold rounded-lg transition-all duration-300 hover:scale-105 hover:bg-[#4752C4] hover:shadow-[0_0_20px_rgba(88,101,242,0.4)] text-sm md:text-[1rem] interactive-card">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19.27 5.33C17.94 4.71 16.5 4.26 15 4a.09.09 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.09 16.09 0 0 0-4.8 0c-.14-.34-.35-.76-.54-1.09c-.01-.02-.04-.03-.07-.03c-1.5.26-2.93.71-4.27 1.33c-.01 0-.02.01-.03.02c-2.72 4.07-3.47 8.03-3.1 11.95c0 .02.01.04.03.05c1.8 1.32 3.53 2.12 5.24 2.65c.03.01.06 0 .07-.02c.4-.55.76-1.13 1.07-1.74c.02-.04 0-.08-.04-.09c-.57-.22-1.11-.48-1.64-.78c-.04-.02-.04-.08-.01-.11c.11-.08.22-.17.33-.25c.02-.02.05-.02.07-.01c3.44 1.57 7.15 1.57 10.55 0c.02-.01.05-.01.07.01c.11.09.22.17.33.26c.04.03.04.09-.01.11c-.52.31-1.07.56-1.64.78c-.04.01-.05.06-.04.09c.32.61.68 1.19 1.07 1.74c.03.02.06.03.09.02c1.72-.53 3.45-1.33 5.25-2.65c.02-.01.03-.03.03-.05c.44-4.53-.73-8.46-3.1-11.95c-.01-.01-.02-.02-.04-.02zM8.52 14.91c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.84 2.12-1.89 2.12zm6.97 0c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.83 2.12-1.89 2.12z"/>
+            </svg>
+            Connect on Discord
+          </button>
+          <div id="discord-toast" class="absolute -top-14 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-white text-black px-4 py-2 rounded-xl font-bold text-sm whitespace-nowrap shadow-xl opacity-0 translate-y-2 pointer-events-none transition-all duration-300">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-[#5865F2]"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            misa_leveldev Copied!
+          </div>
         </div>
+      </div>
     </div>
-
-    <div class="card">
-        <img src="JPEG image-46A0-A371-58-7.jpeg" class="card-img">
-        <div class="card-content">
-            <h3>Void Crossing</h3>
-            <p>Atmospheric bridge environment featuring floating islands and complex environmental storytelling.</p>
-            <a href="#" class="btn-play">Open Experience</a>
-        </div>
+    
+    <div class="w-full h-[400px] md:h-[500px] relative z-0">
+      <!-- 
+        ТУТ ЗМІНЕНО ПОСИЛАННЯ НА ВАЗОНОК! 
+        Завантажте свій файл flowerpot.glb у папку images.
+      -->
+      <model-viewer 
+        src="images/flowerpot.glb"
+        auto-rotate 
+        camera-controls 
+        shadow-intensity="1" 
+        disable-zoom
+        style="width: 100%; height: 100%; background-color: transparent;">
+      </model-viewer>
     </div>
+  </section>
 
-    <div class="card">
-        <img src="JPEG image-46A0-A371-58-0.jpeg" class="card-img">
-        <div class="card-content">
-            <h3>Lunar Village</h3>
-            <p>Eastern-inspired architecture set under a cosmic sky with custom neon shaders.</p>
-            <a href="#" class="btn-play">Open Experience</a>
+  <!-- Projects Grid -->
+  <h2 class="font-display text-4xl md:text-[3.5rem] text-center mt-[100px] mb-[50px] uppercase" id="work">
+    Selected Projects
+  </h2>
+
+  <!-- Container for cards -->
+  <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[30px] px-6 md:px-[10%] pb-10">
+    <!-- Cards will be populated by JS -->
+  </div>
+
+  <div id="show-more-container" class="flex justify-center mb-[100px] px-6">
+    <button id="show-more-btn" class="inline-flex items-center gap-2 py-3 px-8 text-brand-text font-bold rounded-xl transition-all duration-300 hover:scale-105 bg-brand-surface border border-brand-border interactive-card">
+      Show More
+    </button>
+  </div>
+
+  <!-- Reviews -->
+  <section class="py-[100px] px-6 md:px-[10%] relative overflow-hidden" id="reviews">
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-full bg-brand-accent/5 blur-[120px] pointer-events-none"></div>
+    <h2 class="font-display text-4xl md:text-[3.5rem] text-center mb-16 uppercase relative z-10">Client <span class="text-brand-accent">Feedback</span></h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-[30px] relative z-10">
+      <div class="group p-8 md:p-10 bg-brand-surface/50 backdrop-blur-xl border border-brand-border rounded-[24px] transition-all duration-300 hover:border-brand-accent/50 hover:bg-brand-surface interactive-card">
+        <div class="text-brand-accent text-5xl font-display opacity-50 mb-4 leading-none">"</div>
+        <p class="text-brand-text-dim mb-8 text-[1.1rem] leading-relaxed group-hover:text-white transition-colors">Phenomenal lighting and sense of scale. Misa delivered a map that far exceeded our expectations for performance.</p>
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 rounded-full bg-brand-border flex items-center justify-center font-bold text-brand-accent">V</div>
+          <div>
+            <div class="font-bold text-white">— Studio Lead</div>
+            <div class="text-brand-text-dim text-sm">Void Devs</div>
+          </div>
         </div>
+      </div>
+      <div class="group p-8 md:p-10 bg-brand-surface/50 backdrop-blur-xl border border-brand-border rounded-[24px] transition-all duration-300 hover:border-brand-accent/50 hover:bg-brand-surface interactive-card">
+        <div class="text-brand-accent text-5xl font-display opacity-50 mb-4 leading-none">"</div>
+        <p class="text-brand-text-dim mb-8 text-[1.1rem] leading-relaxed group-hover:text-white transition-colors">Highly creative world-builder. The level flow is perfect for our gameplay mechanics. Highly recommend!</p>
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 rounded-full bg-brand-border flex items-center justify-center font-bold text-brand-accent">I</div>
+          <div>
+            <div class="font-bold text-white">— Independent</div>
+            <div class="text-brand-text-dim text-sm">Producer</div>
+          </div>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <div class="card">
-        <img src="JPEG image-46A0-A371-58-11.jpeg" class="card-img">
-        <div class="card-content">
-            <h3>Kingdom Keep</h3>
-            <p>Medieval fortification design with custom windmills and procedural terrain decoration.</p>
-            <a href="#" class="btn-play">Open Experience</a>
-        </div>
+  <!-- Contact -->
+  <section class="py-[150px] px-6 md:px-[10%] max-w-6xl mx-auto" id="contact">
+    <div class="bg-brand-surface border border-brand-border rounded-[30px] p-10 md:p-20 text-center relative overflow-hidden">
+      <!-- Subtle glow effect behind -->
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-full bg-[#5865F2]/10 blur-[100px] pointer-events-none"></div>
+      
+      <h2 class="font-display text-[clamp(2.5rem,6vw,4.5rem)] mb-6 leading-tight relative z-10">
+        Let's craft your <br /><span class="text-[#5865F2]">next world.</span>
+      </h2>
+      <p class="mb-10 text-brand-text-dim text-[1.1rem] max-w-2xl mx-auto relative z-10">
+        I'm currently accepting new commissions and studio roles. If you're looking for an experienced Level Designer to elevate your next project, let's connect.
+      </p>
+      <div class="flex justify-center relative z-10">
+        <button id="discord-footer-btn" class="inline-flex items-center gap-3 py-3 px-7 md:py-4 md:px-[35px] bg-[#5865F2] text-white font-bold rounded-lg transition-all duration-300 hover:scale-105 hover:bg-[#4752C4] hover:shadow-[0_0_20px_rgba(88,101,242,0.4)] text-sm md:text-[1rem] interactive-card">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19.27 5.33C17.94 4.71 16.5 4.26 15 4a.09.09 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.09 16.09 0 0 0-4.8 0c-.14-.34-.35-.76-.54-1.09c-.01-.02-.04-.03-.07-.03c-1.5.26-2.93.71-4.27 1.33c-.01 0-.02.01-.03.02c-2.72 4.07-3.47 8.03-3.1 11.95c0 .02.01.04.03.05c1.8 1.32 3.53 2.12 5.24 2.65c.03.01.06 0 .07-.02c.4-.55.76-1.13 1.07-1.74c.02-.04 0-.08-.04-.09c-.57-.22-1.11-.48-1.64-.78c-.04-.02-.04-.08-.01-.11c.11-.08.22-.17.33-.25c.02-.02.05-.02.07-.01c3.44 1.57 7.15 1.57 10.55 0c.02-.01.05-.01.07.01c.11.09.22.17.33.26c.04.03.04.09-.01.11c-.52.31-1.07.56-1.64.78c-.04.01-.05.06-.04.09c.32.61.68 1.19 1.07 1.74c.03.02.06.03.09.02c1.72-.53 3.45-1.33 5.25-2.65c.02-.01.03-.03.03-.05c.44-4.53-.73-8.46-3.1-11.95c-.01-.01-.02-.02-.04-.02zM8.52 14.91c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.84 2.12-1.89 2.12zm6.97 0c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.83 2.12-1.89 2.12z"/>
+          </svg>
+          Connect on Discord
+        </button>
+      </div>
     </div>
+  </section>
 
-    <div class="card">
-        <img src="JPEG image-46A0-A371-58-5.jpeg" class="card-img">
-        <div class="card-content">
-            <h3>Bay City Skyline</h3>
-            <p>Clean, stylized urban landscape bordering a reflective water body. Mobile-optimized.</p>
-            <a href="#" class="btn-play">Open Experience</a>
-        </div>
-    </div>
+  <!-- Interactions Script -->
+  <script>
+    // 1. Projects Data
+    const projects = [
+      {
+        id: "imperial-arena",
+        title: "Imperial Arena",
+        description: "A grand gladiatorial colosseum with optimized low-poly geometry and cinematic torch lighting.",
+        thumb: "images/image-46A0-A371-58-2.jpeg",
+        gallery: [
+          "images/image-46A0-A371-58-2.jpeg"
+        ]
+      },
+      {
+        id: "void-crossing",
+        title: "Void Crossing",
+        description: "Atmospheric environment featuring broken bridges and floating clock towers.",
+        thumb: "images/image-46A0-A371-58-7.jpeg",
+        gallery: [
+          "images/image-46A0-A371-58-6.jpeg",
+          "images/image-46A0-A371-58-7.jpeg",
+        ]
+      },
+      {
+        id: "lunar-village",
+        title: "Lunar Village",
+        description: "Eastern-inspired architecture set under a cosmic sky with cherry blossom trees.",
+        thumb: "images/image-46A0-A371-58-0.jpeg",
+        gallery: [
+          "images/image-46A0-A371-58-0.jpeg",
+          "images/image-46A0-A371-58-1.jpeg"
+        ]
+      },
+      {
+        id: "kingdom-keep",
+        title: "Kingdom Keep",
+        description: "Medieval fortification design with custom windmills, pink skies, and majestic castle halls.",
+        thumb: "images/image-46A0-A371-58-11.jpeg",
+        gallery: [
+          "images/image-46A0-A371-58-11.jpeg",
+          "images/image-46A0-A371-58-12.jpeg",
+          "images/image-46A0-A371-58-13.jpeg"
+        ]
+      },
+      {
+        id: "bay-city-skyline",
+        title: "Bay City Skyline",
+        description: "Clean, stylized urban landscape featuring massive skyscrapers, banks, and an airport.",
+        thumb: "images/image-46A0-A371-58-5.jpeg",
+        gallery: [
+          "images/image-46A0-A371-58-5.jpeg",
+          "images/image-46A0-A371-58-3.jpeg",
+          "images/image-46A0-A371-58-4.jpeg"
+        ]
+      },
+      {
+        id: "ancient-guardians",
+        title: "Ancient Guardians",
+        description: "Massive monolithic statues acting as landmarks and guiding players over ancient mossy bridges.",
+        thumb: "images/image-46A0-A371-58-14.jpeg",
+        gallery: [
+          "images/image-46A0-A371-58-14.jpeg",
+          "images/image-46A0-A371-58-15.jpeg",
+          "images/image-46A0-A371-58-16.jpeg"
+        ]
+      },
+      {
+        id: "diverse-biomes",
+        title: "Diverse Biomes",
+        description: "Tropical coastal outposts, arid desert ruins, and lush green valleys designed for exploration.",
+        thumb: "images/image-46A0-A371-58-9.jpeg",
+        gallery: [
+          "images/image-46A0-A371-58-9.jpeg",
+          "images/image-46A0-A371-58-10.jpeg",
+          "images/image-46A0-A371-58-8.jpeg"
+        ]
+      }
+    ];
 
-    <div class="card">
-        <img src="JPEG image-46A0-A371-58-14.jpeg" class="card-img">
-        <div class="card-content">
-            <h3>Ancient Guardians</h3>
-            <p>Massive monolithic statues acting as landmarks and guiding players through the level.</p>
-            <a href="#" class="btn-play">Open Experience</a>
-        </div>
-    </div>
-</div>
+    // 2. Render Projects
+    const projectsGrid = document.getElementById('projects-grid');
+    const showMoreBtn = document.getElementById('show-more-btn');
+    const showMoreContainer = document.getElementById('show-more-container');
+    let showAll = false;
 
-<section class="reviews" id="reviews">
-    <h2 class="section-title" style="margin-top: 0;">Client Feedback</h2>
-    <div class="review-grid">
-        <div class="rev-card">
-            <p>"Phenomenal lighting and sense of scale. Misa delivered a map that far exceeded our expectations for performance."</p>
-            <div class="rev-author">— Studio Lead, Void Devs</div>
-        </div>
-        <div class="rev-card">
-            <p>"Highly creative world-builder. The level flow is perfect for our gameplay mechanics. Highly recommend!"</p>
-            <div class="rev-author">— Independent Producer</div>
-        </div>
-    </div>
-</section>
+    function renderProjects() {
+      projectsGrid.innerHTML = '';
+      const visibleProjects = showAll ? projects : projects.slice(0, 3);
+      
+      visibleProjects.forEach((project, idx) => {
+        const cardArrayString = JSON.stringify(project.gallery).replace(/"/g, '&quot;');
+        const cardHTML = `
+          <div class="project-card group bg-brand-surface border border-brand-border rounded-[20px] overflow-hidden transition-all duration-400 flex flex-col interactive-card" onclick="openGallery(${cardArrayString})">
+            <div class="w-full aspect-video overflow-hidden border-b border-brand-border relative">
+              <img src="${project.thumb}" alt="${project.title}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onerror="this.src='images/fallback.jpg'">
+              <div class="absolute inset-0 bg-brand-bg/0 transition-colors duration-300 group-hover:bg-brand-bg/20 flex items-center justify-center">
+                <span class="opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 font-bold bg-brand-accent text-brand-bg px-4 py-2 rounded-lg pointer-events-none tracking-wide text-sm">
+                  View Gallery
+                </span>
+              </div>
+            </div>
+            <div class="p-6 flex-1 flex flex-col pointer-events-none">
+              <h3 class="font-display text-[1.4rem] mb-2.5">${project.title}</h3>
+              <p class="text-brand-text-dim text-[0.9rem] mb-5 flex-1">${project.description}</p>
+              <button class="pointer-events-auto self-start inline-block py-2.5 px-6 bg-brand-accent text-brand-bg font-bold rounded-lg transition-transform duration-300 hover:scale-105 hover:bg-white text-[0.9rem] interactive-card" onclick="event.stopPropagation(); openGallery(${cardArrayString})">
+                View Gallery
+              </button>
+            </div>
+          </div>
+        `;
+        projectsGrid.innerHTML += cardHTML;
+      });
 
-<section class="contact" id="contact">
-    <h2>Ready to start <br><span>a project?</span></h2>
-    <p style="margin-bottom: 40px; color: var(--text-dim);">I'm currently accepting new commissions and studio roles.</p>
-    <a href="mailto:hello@misa.art" class="contact-link">hello@misa.art</a>
-</section>
+      if (showAll || projects.length <= 3) {
+        showMoreContainer.style.display = 'none';
+        projectsGrid.classList.remove('pb-10');
+        projectsGrid.classList.add('pb-[100px]');
+      }
+    }
 
-<script>
+    showMoreBtn.addEventListener('click', () => {
+      showAll = true;
+      renderProjects();
+    });
+
+    renderProjects();
+
+    // 3. Custom Cursor Logic
     const dot = document.getElementById('cursor-dot');
     const outline = document.getElementById('cursor-outline');
-
+    
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let outlineX = mouseX;
+    let outlineY = mouseY;
+    
     window.addEventListener('mousemove', (e) => {
-        dot.style.left = e.clientX + 'px';
-        dot.style.top = e.clientY + 'px';
-        outline.animate({ left: `${e.clientX}px`, top: `${e.clientY}px` }, { duration: 400, fill: "forwards" });
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      // Instantly move dot
+      dot.style.left = mouseX + 'px';
+      dot.style.top = mouseY + 'px';
+      
+      // Check interactive hover
+      const target = e.target;
+      if (target.tagName.toLowerCase() === 'a' || 
+          target.tagName.toLowerCase() === 'button' || 
+          target.closest('button') || 
+          target.closest('a') || 
+          target.closest('.interactive-card')) {
+        outline.classList.add('hovering');
+      } else {
+        outline.classList.remove('hovering');
+      }
     });
 
-    document.querySelectorAll('a, button, .card').forEach(item => {
-        item.addEventListener('mouseenter', () => outline.style.transform = 'translate(-50%, -50%) scale(1.5)');
-        item.addEventListener('mouseleave', () => outline.style.transform = 'translate(-50%, -50%) scale(1)');
-    });
-</script>
+    function animateCursor() {
+      // Spring physics for outline
+      outlineX += (mouseX - outlineX) * 0.15;
+      outlineY += (mouseY - outlineY) * 0.15;
+      outline.style.left = outlineX + 'px';
+      outline.style.top = outlineY + 'px';
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
 
+    // 4. Gallery Logic
+    const modal = document.getElementById('gallery-modal');
+    const modalImg = document.getElementById('gallery-img');
+    const counter = document.getElementById('gallery-counter');
+    const btnNext = document.getElementById('modal-next');
+    const btnPrev = document.getElementById('modal-prev');
+    const btnClose = document.getElementById('modal-close');
+    
+    let currentGallery = [];
+    let currentIndex = 0;
+
+    window.openGallery = (images) => {
+      currentGallery = images;
+      currentIndex = 0;
+      updateGalleryImage();
+      
+      if (images.length <= 1) {
+        btnNext.style.display = 'none';
+        btnPrev.style.display = 'none';
+      } else {
+        btnNext.style.display = 'flex';
+        btnPrev.style.display = 'flex';
+      }
+      
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    };
+
+    function updateGalleryImage() {
+      modalImg.src = currentGallery[currentIndex];
+      counter.innerText = `${currentIndex + 1} / ${currentGallery.length}`;
+    }
+
+    btnNext.addEventListener('click', (e) => {
+      e.stopPropagation();
+      currentIndex = currentIndex === currentGallery.length - 1 ? 0 : currentIndex + 1;
+      updateGalleryImage();
+    });
+
+    btnPrev.addEventListener('click', (e) => {
+      e.stopPropagation();
+      currentIndex = currentIndex === 0 ? currentGallery.length - 1 : currentIndex - 1;
+      updateGalleryImage();
+    });
+
+    btnClose.addEventListener('click', () => {
+      modal.classList.remove('open');
+      document.body.style.overflow = 'auto';
+    });
+
+    // Close on background click
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.remove('open');
+        document.body.style.overflow = 'auto';
+      }
+    });
+
+    // 5. Discord Copy Button
+    function setupDiscordBtn(btnId) {
+      const btn = document.getElementById(btnId);
+      if (!btn) return;
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigator.clipboard.writeText("misa_leveldev").then(() => {
+          const toast = document.getElementById('discord-toast');
+          if(toast) {
+            toast.style.opacity = '1';
+            toast.style.transform = 'translate(-50%, 0)';
+            setTimeout(() => {
+              toast.style.opacity = '0';
+              toast.style.transform = 'translate(-50%, 10px)';
+            }, 2500);
+          }
+        });
+      });
+    }
+    setupDiscordBtn('discord-btn');
+    setupDiscordBtn('discord-footer-btn');
+
+  </script>
 </body>
 </html>
