@@ -138,7 +138,7 @@
       MISA<span class="text-brand-accent">.</span>
     </div>
     <div class="hidden md:flex gap-[30px]">
-      <a href="#work" class="text-brand-text-dim no-underline text-[13px] uppercase tracking-widest transition-colors duration-300 hover:text-brand-accent interactive-card">Work</a>
+      <a href="#work" class="text-brand-text-dim no-underline text-[13px] uppercase tracking-widest transition-colors duration-300 hover:text-brand-accent interactive-card">Projects</a>
       <a href="#reviews" class="text-brand-text-dim no-underline text-[13px] uppercase tracking-widest transition-colors duration-300 hover:text-brand-accent interactive-card">Reviews</a>
       <a href="#contact" class="text-brand-text-dim no-underline text-[13px] uppercase tracking-widest transition-colors duration-300 hover:text-brand-accent interactive-card">Contact</a>
     </div>
@@ -180,7 +180,7 @@
         ПЕРЕД ТИМ ЯК ВИТЯГУВАТИ НА GITHUB, ЗМІНІТЬ src НА: "images/робоча_модель.glb"
       -->
       <model-viewer 
-        src="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/AntiqueCamera/glTF-Binary/AntiqueCamera.glb"
+        src="https://raw.githubusercontent.com/mrdoob/three.js/master/examples/models/gltf/LittlestTokyo.glb"
         auto-rotate 
         camera-controls 
         shadow-intensity="1" 
@@ -264,6 +264,28 @@
     // 1. Projects Data
     const projects = [
       {
+        id: "bay-city-skyline",
+        title: "Bay City Skyline",
+        description: "Clean, stylized urban landscape featuring massive skyscrapers, banks, and an airport.",
+        thumb: "images/JPEG image-46A0-A371-58-5.jpeg",
+        gallery: [
+          "images/JPEG image-46A0-A371-58-5.jpeg",
+          "images/JPEG image-46A0-A371-58-3.jpeg",
+          "images/JPEG image-46A0-A371-58-4.jpeg"
+        ]
+      },
+      {
+        id: "ancient-guardians",
+        title: "Ancient Guardians",
+        description: "Massive monolithic statues acting as landmarks and guiding players over ancient mossy bridges.",
+        thumb: "images/JPEG image-46A0-A371-58-14.jpeg",
+        gallery: [
+          "images/JPEG image-46A0-A371-58-14.jpeg",
+          "images/JPEG image-46A0-A371-58-15.jpeg",
+          "images/JPEG image-46A0-A371-58-16.jpeg"
+        ]
+      },
+      {
         id: "imperial-arena",
         title: "Imperial Arena",
         description: "A grand gladiatorial colosseum with optimized low-poly geometry and cinematic torch lighting.",
@@ -301,28 +323,6 @@
           "images/JPEG image-46A0-A371-58-11.jpeg",
           "images/JPEG image-46A0-A371-58-12.jpeg",
           "images/JPEG image-46A0-A371-58-13.jpeg"
-        ]
-      },
-      {
-        id: "bay-city-skyline",
-        title: "Bay City Skyline",
-        description: "Clean, stylized urban landscape featuring massive skyscrapers, banks, and an airport.",
-        thumb: "images/JPEG image-46A0-A371-58-5.jpeg",
-        gallery: [
-          "images/JPEG image-46A0-A371-58-5.jpeg",
-          "images/JPEG image-46A0-A371-58-3.jpeg",
-          "images/JPEG image-46A0-A371-58-4.jpeg"
-        ]
-      },
-      {
-        id: "ancient-guardians",
-        title: "Ancient Guardians",
-        description: "Massive monolithic statues acting as landmarks and guiding players over ancient mossy bridges.",
-        thumb: "images/JPEG image-46A0-A371-58-14.jpeg",
-        gallery: [
-          "images/JPEG image-46A0-A371-58-14.jpeg",
-          "images/JPEG image-46A0-A371-58-15.jpeg",
-          "images/JPEG image-46A0-A371-58-16.jpeg"
         ]
       },
       {
