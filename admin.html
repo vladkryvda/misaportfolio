@@ -2,20 +2,27 @@
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MISA | Адмін-панель</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>body { background-color: #0c0c0e; color: #e2e2e2; }</style>
+  <style>
+    body { background-color: #0c0c0e; color: #e2e2e2; }
+  </style>
 </head>
 <body class="p-6 md:p-12 max-w-4xl mx-auto min-h-screen flex flex-col justify-center">
 
   <!-- 1. ЕКРАН АВТОРИЗАЦІЇ (якщо не залогінений) -->
   <div id="auth-screen" class="max-w-md mx-auto w-full bg-zinc-900 border border-zinc-800 p-8 rounded-2xl shadow-2xl">
-    <h2 class="text-2xl font-bold text-emerald-400 mb-6 text-center">Вхід в адмінку</h2>
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-emerald-400">Вхід в адмінку</h2>
+      <a href="index.html" class="text-xs text-zinc-500 hover:text-white">← На сайт</a>
+    </div>
+    
     <form id="login-form" class="space-y-4">
       <div>
         <label class="block text-sm text-zinc-400 mb-1">Email</label>
-        <input type="email" id="login-email" required class="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-3 text-white outline-none focus:border-emerald-500">
+        <input type="email" id="login-email" required class="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-3 text-white outline-none focus:border-emerald-500" placeholder="admin@misa.com">
       </div>
       <div>
         <label class="block text-sm text-zinc-400 mb-1">Пароль</label>
@@ -29,8 +36,13 @@
   <!-- 2. ГОЛОВНА ПАНЕЛЬ (показується тільки після входу) -->
   <div id="dashboard-screen" class="hidden w-full">
     <div class="flex justify-between items-center mb-8 border-b border-zinc-800 pb-4">
-      <h1 class="text-2xl md:text-3xl font-bold text-emerald-400">Керування портфоліо</h1>
-      <button onclick="logout()" class="text-sm px-4 py-2 border border-zinc-700 rounded-lg hover:bg-zinc-800 text-zinc-400">Вийти</button>
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold text-emerald-400">Керування портфоліо</h1>
+        <a href="index.html" class="text-sm text-zinc-400 hover:text-emerald-400 inline-flex items-center gap-1 mt-1">
+          ← Перейти на сайт портфоліо
+        </a>
+      </div>
+      <button onclick="logout()" class="text-sm px-4 py-2 border border-zinc-700 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-red-400 transition">Вийти</button>
     </div>
 
     <div class="flex gap-4 mb-8">
@@ -47,24 +59,25 @@
 
       <div>
         <label class="block text-sm text-zinc-400 mb-2">Опис роботи</label>
-        <textarea id="p-desc" rows="3" required class="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-3 text-white outline-none focus:border-emerald-500"></textarea>
+        <textarea id="p-desc" rows="3" required class="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-3 text-white outline-none focus:border-emerald-500" placeholder="Опис карти чи локації..."></textarea>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="p-4 border-2 border-dashed border-zinc-700 rounded-xl bg-zinc-800/40">
           <label class="block font-semibold text-emerald-400 mb-1">Головне фото (Обкладинка)</label>
+          <span class="text-xs text-zinc-400 block mb-2">З'явиться першим у списку</span>
           <input type="file" id="p-thumb" accept="image/*" required class="text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-emerald-500 file:text-black font-semibold cursor-pointer">
         </div>
 
         <div class="p-4 border-2 border-dashed border-zinc-700 rounded-xl bg-zinc-800/40">
           <label class="block font-semibold text-emerald-400 mb-1">Додаткові фото (Галерея)</label>
-          <span class="text-xs text-zinc-400 block mb-2">Виділи декілька фото одразу</span>
+          <span class="text-xs text-zinc-400 block mb-2">Виділи кілька фото мишкою</span>
           <input type="file" id="p-gallery" accept="image/*" multiple class="text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-zinc-700 file:text-white font-semibold cursor-pointer">
         </div>
       </div>
 
       <button type="submit" id="p-submit" class="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-bold rounded-xl transition">
-        Опублікувати роботу
+        Опублікувати роботу на сайт
       </button>
     </form>
 
@@ -80,7 +93,7 @@
       </div>
       <div>
         <label class="block text-sm text-zinc-400 mb-2">Текст відгуку</label>
-        <textarea id="r-text" rows="4" required class="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-3 text-white outline-none focus:border-emerald-500"></textarea>
+        <textarea id="r-text" rows="4" required class="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-3 text-white outline-none focus:border-emerald-500" placeholder="Чудовий розробник..."></textarea>
       </div>
       <button type="submit" id="r-submit" class="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-bold rounded-xl transition">
         Опублікувати відгук
@@ -91,46 +104,59 @@
   </div>
 
   <script>
-    // ВСТАВ СЮДИ ТАКІ САМІ КЛЮЧІ, ЯК І В INDEX.HTML:
-    const SUPABASE_URL = 'https://tvoy-proekt.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOi...';
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    /* ==========================================================================
+       НАЛАШТУВАННЯ SUPABASE З ЛОКАЛЬНИМ ЗБЕРЕЖЕННЯМ СЕСІЇ
+       ========================================================================== */
+    const SUPABASE_URL = 'https://pqtyqtibywelkzdyinxq.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxdHlxdGlieXdlbGt6ZHlpbnhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0MTc0MDgsImV4cCI6MjEwNDk5MzQwOH0.p92uyLdQF4zSAGV3NRfA4HUapWNp7ZHBtB7HA09uydc';
 
-    // Перевірка авторизації при відкритті сторінки
-    async function checkUser() {
-      const { data: { session } } = await _supabase.auth.getSession();
-      if (session) {
-        document.getElementById('auth-screen').classList.add('hidden');
-        document.getElementById('dashboard-screen').classList.remove('hidden');
-      } else {
-        document.getElementById('auth-screen').classList.remove('hidden');
-        document.getElementById('dashboard-screen').classList.add('hidden');
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+      auth: {
+        persistSession: true,               // Сесія зберігається у пам'яті браузера
+        autoRefreshToken: true,             // Автоматичне продовження токена
+        storage: window.localStorage        // Жорстка прив'язка до LocalStorage
       }
-    }
-    checkUser();
+    });
+
+    const authScreen = document.getElementById('auth-screen');
+    const dashboardScreen = document.getElementById('dashboard-screen');
+
+    // Миттєве відновлення сесії при відкритті вкладки
+    _supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        authScreen.classList.add('hidden');
+        dashboardScreen.classList.remove('hidden');
+      } else {
+        authScreen.classList.remove('hidden');
+        dashboardScreen.classList.add('hidden');
+      }
+    });
 
     // Логін
     document.getElementById('login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = document.getElementById('login-email').value;
-      const password = document.getElementById('login-pass').value;
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-pass').value.trim();
       const errorEl = document.getElementById('login-error');
+      const btn = document.getElementById('login-btn');
       
+      btn.innerText = 'Вхід...';
+      btn.disabled = true;
       errorEl.classList.add('hidden');
+
       const { error } = await _supabase.auth.signInWithPassword({ email, password });
       
       if (error) {
-        errorEl.innerText = 'Невірний логін або пароль';
+        errorEl.innerText = 'Невірний email або пароль';
         errorEl.classList.remove('hidden');
-      } else {
-        checkUser();
+        btn.innerText = 'Увійти';
+        btn.disabled = false;
       }
     });
 
     // Вихід
     async function logout() {
       await _supabase.auth.signOut();
-      checkUser();
     }
 
     // Перемикання вкладок
@@ -150,6 +176,7 @@
       }
     }
 
+    // Завантаження фото в Storage
     async function uploadImage(file) {
       const ext = file.name.split('.').pop();
       const fileName = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${ext}`;
@@ -159,12 +186,13 @@
       return data.publicUrl;
     }
 
-    // Додавання роботи
+    // Відправка проєкту
     document.getElementById('project-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('p-submit');
       const status = document.getElementById('status');
-      btn.innerText = 'Завантаження фото...'; btn.disabled = true;
+      btn.innerText = 'Завантаження фото на сервер...'; 
+      btn.disabled = true;
 
       try {
         const thumbFile = document.getElementById('p-thumb').files[0];
@@ -185,7 +213,7 @@
         }]);
 
         if (error) throw error;
-        status.innerText = '✅ Роботу додано!';
+        status.innerText = '✅ Роботу успішно опубліковано на сайт!';
         status.className = 'mt-6 text-center text-lg text-emerald-400';
         status.classList.remove('hidden');
         document.getElementById('project-form').reset();
@@ -194,16 +222,18 @@
         status.className = 'mt-6 text-center text-lg text-red-400';
         status.classList.remove('hidden');
       } finally {
-        btn.innerText = 'Опублікувати роботу'; btn.disabled = false;
+        btn.innerText = 'Опублікувати роботу на сайт'; 
+        btn.disabled = false;
       }
     });
 
-    // Додавання відгуку
+    // Відправка відгуку
     document.getElementById('review-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('r-submit');
       const status = document.getElementById('status');
-      btn.innerText = 'Публікація...'; btn.disabled = true;
+      btn.innerText = 'Публікація...'; 
+      btn.disabled = true;
 
       try {
         const { error } = await _supabase.from('reviews').insert([{
@@ -213,7 +243,7 @@
         }]);
 
         if (error) throw error;
-        status.innerText = '✅ Відгук додано!';
+        status.innerText = '✅ Відгук успішно опубліковано!';
         status.className = 'mt-6 text-center text-lg text-emerald-400';
         status.classList.remove('hidden');
         document.getElementById('review-form').reset();
@@ -222,7 +252,8 @@
         status.className = 'mt-6 text-center text-lg text-red-400';
         status.classList.remove('hidden');
       } finally {
-        btn.innerText = 'Опублікувати відгук'; btn.disabled = false;
+        btn.innerText = 'Опублікувати відгук'; 
+        btn.disabled = false;
       }
     });
   </script>
