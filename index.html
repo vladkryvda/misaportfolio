@@ -7,6 +7,8 @@
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+  <!-- ПІДКЛЮЧЕННЯ БІБЛІОТЕКИ SUPABASE -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Inter:wght@400;500;600;700&display=swap');
@@ -108,6 +110,7 @@
     <div class="absolute bottom-1/4 right-1/4 w-[40vw] h-[40vw] bg-[#5865F2]/5 rounded-full blur-[150px]"></div>
   </div>
 
+  <!-- GALLERY MODAL -->
   <div id="gallery-modal" class="fixed inset-0 z-[1000] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 md:p-8">
     <button id="modal-close" class="absolute top-6 right-6 text-white/60 hover:text-white transition-colors z-[1001] interactive-card">
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -129,6 +132,7 @@
     </button>
   </div>
 
+  <!-- NAVIGATION -->
   <nav class="fixed top-0 w-full h-[70px] flex items-center justify-between px-6 md:px-[50px] bg-[#0c0c0e]/80 backdrop-blur-md z-[100] border-b border-brand-border">
     <div class="font-display font-extrabold text-xl tracking-tight interactive-card">
       MISA<span class="text-brand-accent">.</span>
@@ -140,6 +144,7 @@
     </div>
   </nav>
 
+  <!-- HERO SECTION -->
   <section class="min-h-screen flex flex-col md:grid md:grid-cols-[1.2fr_0.8fr] items-center px-6 md:px-[10%] pt-[100px] md:pt-0 gap-[50px]">
     <div class="text-center md:text-left z-10 w-full">
       <p class="text-brand-accent tracking-[4px] font-semibold uppercase mb-[15px] text-sm md:text-base">
@@ -179,12 +184,15 @@
     </div>
   </section>
 
+  <!-- PROJECTS SECTION -->
   <h2 class="font-display text-4xl md:text-[3.5rem] text-center mt-[100px] mb-[50px] uppercase" id="work">
     Selected Projects
   </h2>
 
+  <!-- Сюди автоматично рендеряться проєкти з Supabase -->
   <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 gap-[30px] px-6 md:px-[10%] pb-10">
-    </div>
+    <div class="col-span-full text-center py-12 text-brand-text-dim">Завантаження робіт...</div>
+  </div>
 
   <div id="show-more-container" class="flex justify-center mb-[100px] px-6">
     <button id="show-more-btn" class="inline-flex items-center gap-2 py-3 px-8 text-brand-accent font-bold rounded-xl transition-all duration-300 hover:scale-110 bg-brand-accent/10 border border-brand-accent/30 hover:border-brand-accent hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] interactive-card">
@@ -192,35 +200,20 @@
     </button>
   </div>
 
+  <!-- REVIEWS SECTION -->
   <section class="py-[100px] px-6 md:px-[10%] relative overflow-hidden" id="reviews">
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-full bg-brand-accent/5 blur-[120px] pointer-events-none"></div>
-    <h2 class="font-display text-4xl md:text-[3.5rem] text-center mb-16 uppercase relative z-10">Client <span class="text-brand-accent">Feedback</span></h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-[30px] relative z-10">
-      <div class="group p-8 md:p-10 bg-brand-surface/50 backdrop-blur-xl border border-brand-border rounded-[24px] transition-all duration-300 hover:border-brand-accent/50 hover:bg-brand-surface interactive-card">
-        <div class="text-brand-accent text-5xl font-display opacity-50 mb-4 leading-none">"</div>
-        <p class="text-brand-text-dim mb-8 text-[1.1rem] leading-relaxed group-hover:text-white transition-colors">Phenomenal lighting and sense of scale. Misa delivered a map that far exceeded our expectations for performance.</p>
-        <div class="flex items-center gap-4">
-          <div class="w-10 h-10 rounded-full bg-brand-border flex items-center justify-center font-bold text-brand-accent">V</div>
-          <div>
-            <div class="font-bold text-white">— Studio Lead</div>
-            <div class="text-brand-text-dim text-sm">Void Devs</div>
-          </div>
-        </div>
-      </div>
-      <div class="group p-8 md:p-10 bg-brand-surface/50 backdrop-blur-xl border border-brand-border rounded-[24px] transition-all duration-300 hover:border-brand-accent/50 hover:bg-brand-surface interactive-card">
-        <div class="text-brand-accent text-5xl font-display opacity-50 mb-4 leading-none">"</div>
-        <p class="text-brand-text-dim mb-8 text-[1.1rem] leading-relaxed group-hover:text-white transition-colors">Highly creative world-builder. The level flow is perfect for our gameplay mechanics. Highly recommend!</p>
-        <div class="flex items-center gap-4">
-          <div class="w-10 h-10 rounded-full bg-brand-border flex items-center justify-center font-bold text-brand-accent">I</div>
-          <div>
-            <div class="font-bold text-white">— Independent</div>
-            <div class="text-brand-text-dim text-sm">Producer</div>
-          </div>
-        </div>
-      </div>
+    <h2 class="font-display text-4xl md:text-[3.5rem] text-center mb-16 uppercase relative z-10">
+      Client <span class="text-brand-accent">Feedback</span>
+    </h2>
+    
+    <!-- Сюди автоматично рендеряться відгуки з Supabase -->
+    <div id="reviews-grid" class="grid grid-cols-1 md:grid-cols-2 gap-[30px] relative z-10">
+      <div class="col-span-full text-center py-8 text-brand-text-dim">Завантаження відгуків...</div>
     </div>
   </section>
 
+  <!-- CONTACT SECTION -->
   <section class="py-[150px] px-6 md:px-[10%] max-w-6xl mx-auto" id="contact">
     <div class="bg-brand-surface border border-brand-border rounded-[30px] p-10 md:p-20 text-center relative overflow-hidden">
       <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-full bg-brand-accent/10 blur-[100px] pointer-events-none"></div>
@@ -243,110 +236,82 @@
   </section>
 
   <script>
-    // 1. Projects Data
-    const projects = [
-      {
-        id: "bay-city-skyline",
-        title: "Bay City Skyline",
-        description: "Clean, stylized urban landscape featuring massive skyscrapers, banks, and an airport.",
-        thumb: "images/JPEG image-46A0-A371-58-5.jpeg",
-        gallery: [
-          "images/JPEG image-46A0-A371-58-5.jpeg",
-          "images/JPEG image-46A0-A371-58-3.jpeg",
-          "images/JPEG image-46A0-A371-58-4.jpeg"
-        ]
-      },
-      {
-        id: "ancient-guardians",
-        title: "Ancient Guardians",
-        description: "Massive monolithic statues acting as landmarks and guiding players over ancient mossy bridges.",
-        thumb: "images/JPEG image-46A0-A371-58-14.jpeg",
-        gallery: [
-          "images/JPEG image-46A0-A371-58-14.jpeg",
-          "images/JPEG image-46A0-A371-58-15.jpeg",
-          "images/JPEG image-46A0-A371-58-16.jpeg"
-        ]
-      },
-      {
-        id: "imperial-arena",
-        title: "Imperial Arena",
-        description: "A grand gladiatorial colosseum with optimized low-poly geometry and cinematic torch lighting.",
-        thumb: "images/JPEG image-46A0-A371-58-2.jpeg",
-        gallery: [
-          "images/JPEG image-46A0-A371-58-2.jpeg"
-        ]
-      },
-      {
-        id: "void-crossing",
-        title: "Void Crossing",
-        description: "Atmospheric environment featuring broken bridges and floating clock towers.",
-        thumb: "images/JPEG image-46A0-A371-58-7.jpeg",
-        gallery: [
-          "images/JPEG image-46A0-A371-58-6.jpeg",
-          "images/JPEG image-46A0-A371-58-7.jpeg",
-        ]
-      },
-      {
-        id: "lunar-village",
-        title: "Lunar Village",
-        description: "Eastern-inspired architecture set under a cosmic sky with cherry blossom trees.",
-        thumb: "images/JPEG image-46A0-A371-58-0.jpeg",
-        gallery: [
-          "images/JPEG image-46A0-A371-58-0.jpeg",
-          "images/JPEG image-46A0-A371-58-1.jpeg"
-        ]
-      },
-      {
-        id: "kingdom-keep",
-        title: "Kingdom Keep",
-        description: "Medieval fortification design with custom windmills, pink skies, and majestic castle halls.",
-        thumb: "images/JPEG image-46A0-A371-58-11.jpeg",
-        gallery: [
-          "images/JPEG image-46A0-A371-58-11.jpeg",
-          "images/JPEG image-46A0-A371-58-12.jpeg",
-          "images/JPEG image-46A0-A371-58-13.jpeg"
-        ]
-      },
-      {
-        id: "diverse-biomes",
-        title: "Diverse Biomes",
-        description: "Tropical coastal outposts, arid desert ruins, and lush green valleys designed for exploration.",
-        thumb: "images/JPEG image-46A0-A371-58-9.jpeg",
-        gallery: [
-          "images/JPEG image-46A0-A371-58-9.jpeg",
-          "images/JPEG image-46A0-A371-58-10.jpeg",
-          "images/JPEG image-46A0-A371-58-8.jpeg"
-        ]
-      }
-    ];
+    /* ==========================================================================
+       1. НАЛАШТУВАННЯ SUPABASE (ВСТАВ СВОЇ ДАНІ ТУТ)
+       ========================================================================== */
+    const SUPABASE_URL = 'https://pqtyqtibywelkzdyinxq.supabase.co'; // <--- ТВІЙ URL
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxdHlxdGlieXdlbGt6ZHlpbnhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0MTc0MDgsImV4cCI6MjEwNDk5MzQwOH0.p92uyLdQF4zSAGV3NRfA4HUapWNp7ZHBtB7HA09uydc';                   // <--- ТВІЙ ANON ПУБЛІЧНИЙ КЛЮЧ
+    
+    // Ініціалізація клієнта
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // 2. Render Projects
+    /* ==========================================================================
+       2. ЗАВАНТАЖЕННЯ ДАНИХ З БАЗИ (PROJECTS & REVIEWS)
+       ========================================================================== */
+    let projects = [];
     const projectsGrid = document.getElementById('projects-grid');
     const showMoreBtn = document.getElementById('show-more-btn');
     const showMoreContainer = document.getElementById('show-more-container');
     let showAll = false;
 
+    async function loadDataFromSupabase() {
+      try {
+        // Отримуємо проєкти (найновіші зверху)
+        const { data: dbProjects, error: pError } = await _supabase
+          .from('projects')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (pError) throw pError;
+        projects = dbProjects || [];
+        renderProjects();
+
+        // Отримуємо відгуки
+        const { data: dbReviews, error: rError } = await _supabase
+          .from('reviews')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (rError) throw rError;
+        renderReviews(dbReviews || []);
+
+      } catch (err) {
+        console.error('Помилка завантаження даних:', err);
+        projectsGrid.innerHTML = '<div class="col-span-full text-center text-red-400">Не вдалося завантажити проєкти. Перевірте ключі Supabase.</div>';
+      }
+    }
+
+    // Рендер проєктів у сітку
     function renderProjects() {
       projectsGrid.innerHTML = '';
+
+      if (projects.length === 0) {
+        projectsGrid.innerHTML = '<div class="col-span-full text-center text-brand-text-dim">Роботи ще не додані.</div>';
+        showMoreContainer.style.display = 'none';
+        return;
+      }
+
       const visibleProjects = showAll ? projects : projects.slice(0, 3);
       
       visibleProjects.forEach((project, idx) => {
-        const cardArrayString = JSON.stringify(project.gallery).replace(/"/g, '&quot;');
+        // Захист: якщо галерея збережена рядком чи масивом
+        const galleryArr = Array.isArray(project.gallery) ? project.gallery : [project.thumb];
+        const cardArrayString = JSON.stringify(galleryArr).replace(/"/g, '&quot;');
         const colSpanClass = (idx % 3 === 0) ? 'md:col-span-2' : 'md:col-span-1';
         
         const cardHTML = `
           <div class="project-card group rounded-[24px] overflow-hidden transition-all duration-500 relative interactive-card cursor-pointer border-2 border-transparent ${colSpanClass} aspect-video md:aspect-auto md:min-h-[350px]" onclick="openGallery(${cardArrayString})">
-            <img src="${project.thumb}" alt="${project.title}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onerror="this.src='images/fallback.jpg'">
+            <img src="${project.thumb}" alt="${project.title}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onerror="this.src='https://placehold.co/800x600/121214/10b981?text=No+Image'">
             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
             
             <div class="absolute inset-0 p-6 flex flex-col justify-end transition-transform duration-500 transform translate-y-4 group-hover:translate-y-0">
               <h3 class="font-display text-[1.5rem] text-white mb-2">${project.title}</h3>
-              <p class="text-white/70 text-[0.95rem] mb-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">${project.description}</p>
+              <p class="text-white/70 text-[0.95rem] mb-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">${project.description || ''}</p>
             </div>
             
             <div class="absolute top-4 right-4 bg-black/50 backdrop-blur-md border border-white/10 text-white/90 px-3 py-1.5 rounded-full text-xs font-bold font-mono tracking-widest opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-[-10px] group-hover:translate-y-0 flex items-center gap-2">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-              GALLERY
+              GALLERY (${galleryArr.length})
             </div>
           </div>
         `;
@@ -356,16 +321,38 @@
       if (projects.length <= 3) {
         showMoreContainer.style.display = 'none';
       } else {
-        if (showAll) {
-          showMoreBtn.innerText = "Show Less";
-          projectsGrid.classList.remove('pb-10');
-          projectsGrid.classList.add('pb-[50px]');
-        } else {
-          showMoreBtn.innerText = "Show More";
-          projectsGrid.classList.remove('pb-[50px]');
-          projectsGrid.classList.add('pb-10');
-        }
+        showMoreContainer.style.display = 'flex';
+        showMoreBtn.innerText = showAll ? "Show Less" : "Show More";
       }
+    }
+
+    // Рендер відгуків
+    function renderReviews(reviews) {
+      const container = document.getElementById('reviews-grid');
+      container.innerHTML = '';
+
+      if (reviews.length === 0) {
+        container.innerHTML = '<div class="col-span-full text-center text-brand-text-dim">Відгуків поки немає.</div>';
+        return;
+      }
+
+      reviews.forEach(r => {
+        const initial = r.author ? r.author.trim().charAt(0).toUpperCase() : 'C';
+
+        container.innerHTML += `
+          <div class="group p-8 md:p-10 bg-brand-surface/50 backdrop-blur-xl border border-brand-border rounded-[24px] transition-all duration-300 hover:border-brand-accent/50 hover:bg-brand-surface interactive-card">
+            <div class="text-brand-accent text-5xl font-display opacity-50 mb-4 leading-none">"</div>
+            <p class="text-brand-text-dim mb-8 text-[1.1rem] leading-relaxed group-hover:text-white transition-colors">${r.text}</p>
+            <div class="flex items-center gap-4">
+              <div class="w-10 h-10 rounded-full bg-brand-border flex items-center justify-center font-bold text-brand-accent">${initial}</div>
+              <div>
+                <div class="font-bold text-white">— ${r.author}</div>
+                <div class="text-brand-text-dim text-sm">${r.role || ''}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
     }
 
     showMoreBtn.addEventListener('click', () => {
@@ -376,22 +363,21 @@
       }
     });
 
-    renderProjects();
+    // Завантажуємо все з Supabase при відкритті сайту
+    loadDataFromSupabase();
 
-    // 3. Custom Cursor Logic
+    /* ==========================================================================
+       3. ТВОЯ ОРИГІНАЛЬНА ЛОГІКА (КУРСОР, МОДАЛКА, СКРОЛ)
+       ========================================================================== */
+    // Cursor Logic
     const dot = document.getElementById('cursor-dot');
     const outline = document.getElementById('cursor-outline');
-    
-    let mouseX = window.innerWidth / 2;
-    let mouseY = window.innerHeight / 2;
-    let outlineX = mouseX;
-    let outlineY = mouseY;
+    let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+    let outlineX = mouseX, outlineY = mouseY;
     
     window.addEventListener('mousemove', (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      dot.style.left = mouseX + 'px';
-      dot.style.top = mouseY + 'px';
+      mouseX = e.clientX; mouseY = e.clientY;
+      dot.style.left = mouseX + 'px'; dot.style.top = mouseY + 'px';
       
       const target = e.target;
       if (target.tagName.toLowerCase() === 'a' || 
@@ -414,29 +400,23 @@
     }
     animateCursor();
 
-    // 4. Gallery Logic
+    // Gallery Logic
     const modal = document.getElementById('gallery-modal');
     const modalImg = document.getElementById('gallery-img');
     const counter = document.getElementById('gallery-counter');
     const btnNext = document.getElementById('modal-next');
     const btnPrev = document.getElementById('modal-prev');
     const btnClose = document.getElementById('modal-close');
-    
-    let currentGallery = [];
-    let currentIndex = 0;
+    let currentGallery = [], currentIndex = 0;
 
     window.openGallery = (images) => {
+      if (!images || images.length === 0) return;
       currentGallery = images;
       currentIndex = 0;
       updateGalleryImage();
       
-      if (images.length <= 1) {
-        btnNext.style.display = 'none';
-        btnPrev.style.display = 'none';
-      } else {
-        btnNext.style.display = 'flex';
-        btnPrev.style.display = 'flex';
-      }
+      btnNext.style.display = images.length <= 1 ? 'none' : 'flex';
+      btnPrev.style.display = images.length <= 1 ? 'none' : 'flex';
       
       modal.classList.add('open');
       document.body.style.overflow = 'hidden';
@@ -471,7 +451,7 @@
       }
     });
 
-    // 5. Discord Buttons
+    // Discord Buttons
     function setupDiscordBtn(btnId) {
       const btn = document.getElementById(btnId);
       if (!btn) return;
@@ -483,20 +463,13 @@
     setupDiscordBtn('discord-btn');
     setupDiscordBtn('discord-footer-btn');
 
-    // --- ЗМІНИ ТУТ (ФІКС СКРОЛУ ПРИ ЗАВАНТАЖЕННІ) ---
-    if ('scrollRestoration' in history) {
-      history.scrollRestoration = 'manual';
-    }
-
+    // Scroll Fix
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     window.addEventListener('DOMContentLoaded', () => {
       const htmlElement = document.documentElement;
-      
       htmlElement.classList.remove('scroll-smooth');
       window.scrollTo(0, 0);
-      
-      setTimeout(() => {
-        htmlElement.classList.add('scroll-smooth');
-      }, 50);
+      setTimeout(() => htmlElement.classList.add('scroll-smooth'), 50);
     });
   </script>
 </body>
