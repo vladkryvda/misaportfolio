@@ -27,14 +27,12 @@
       backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
-    
-    .glass-panel:hover {
-      border-color: rgba(16, 185, 129, 0.3);
-    }
 
-    .dropzone-active {
+    /* Стиль Drag-and-Drop зони при наведенні файлу */
+    .drop-active {
       border-color: #10b981 !important;
-      background: rgba(16, 185, 129, 0.05) !important;
+      background-color: rgba(16, 185, 129, 0.12) !important;
+      transform: scale(1.01);
     }
   </style>
 
@@ -58,53 +56,49 @@
 </head>
 <body class="relative min-h-screen flex flex-col justify-center items-center p-4 md:p-10">
 
-  <!-- ФОНОВІ НЕОНОВІ СЯЙВА ТА СІТКА ЯК НА САЙТІ -->
+  <!-- СІТКА І СЯЙВО -->
   <div class="fixed inset-0 pointer-events-none z-[-1]">
     <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff06_1px,transparent_1px),linear-gradient(to_bottom,#ffffff06_1px,transparent_1px)] bg-[size:32px_32px]"></div>
     <div class="absolute top-1/4 left-1/4 w-[40vw] h-[40vw] bg-brand-accent/10 rounded-full blur-[160px]"></div>
     <div class="absolute bottom-1/4 right-1/4 w-[40vw] h-[40vw] bg-brand-discord/10 rounded-full blur-[160px]"></div>
   </div>
 
-  <!-- ===================================================================== -->
-  <!-- 1. АВТОРИЗАЦІЯ (СТИЛЬНИЙ КІБЕР-ВХІД)                                   -->
-  <!-- ===================================================================== -->
+  <!-- 1. ЕКРАН АВТОРИЗАЦІЇ -->
   <div id="auth-screen" class="max-w-md w-full glass-panel p-8 md:p-10 rounded-[28px] shadow-2xl relative">
     <div class="text-center mb-8">
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-accent/10 border border-brand-accent/20 text-brand-accent text-xs font-mono tracking-widest uppercase mb-4">
         Studio Access
       </div>
       <h2 class="font-display text-3xl font-extrabold text-white">MISA<span class="text-brand-accent">.</span> OS</h2>
-      <p class="text-zinc-400 text-sm mt-1">Авторизуйтесь для керування контентом</p>
+      <p class="text-zinc-400 text-sm mt-1">Авторизуйтесь для керування сайтом</p>
     </div>
 
     <form id="login-form" class="space-y-5">
       <div>
         <label class="block text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2">Creator Email</label>
-        <input type="email" id="login-email" required class="w-full bg-black/50 border border-zinc-800 rounded-xl p-3.5 text-white outline-none focus:border-brand-accent transition font-sans placeholder:text-zinc-600" placeholder="admin@misa.com">
+        <input type="email" id="login-email" required class="w-full bg-black/50 border border-zinc-800 rounded-xl p-3.5 text-white outline-none focus:border-brand-accent transition font-sans placeholder:text-zinc-600" placeholder="misa@studio.com">
       </div>
       <div>
         <label class="block text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2">Secret Passkey</label>
         <input type="password" id="login-pass" required class="w-full bg-black/50 border border-zinc-800 rounded-xl p-3.5 text-white outline-none focus:border-brand-accent transition font-sans placeholder:text-zinc-600" placeholder="••••••••••••">
       </div>
-      <button type="submit" id="login-btn" class="w-full py-4 bg-brand-accent hover:bg-[#0ea371] text-black font-bold font-display uppercase tracking-wider rounded-xl transition-all duration-300 hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] hover:scale-[1.02]">
+      <button type="submit" id="login-btn" class="w-full py-4 bg-brand-accent hover:bg-[#0ea371] text-black font-bold font-display uppercase tracking-wider rounded-xl transition-all duration-300 hover:shadow-[0_0_25px_rgba(16,185,129,0.4)]">
         Увійти в кабінет
       </button>
       <p id="login-error" class="text-red-400 text-xs text-center font-mono hidden pt-2"></p>
     </form>
     
     <div class="text-center mt-6 pt-6 border-t border-zinc-800/60">
-      <a href="index.html" class="text-xs text-zinc-500 hover:text-white transition inline-flex items-center gap-1 font-mono">
-        ← Повернутись на публічний сайт
+      <a href="index.html" class="text-xs text-zinc-500 hover:text-white transition font-mono">
+        ← Повернутись на сайт
       </a>
     </div>
   </div>
 
-  <!-- ===================================================================== -->
-  <!-- 2. СТУДІЙНА ПАНЕЛЬ КЕРУВАННЯ (З'ЯВЛЯЄТЬСЯ ПІСЛЯ ВХОДУ)                 -->
-  <!-- ===================================================================== -->
+  <!-- 2. ГОЛОВНИЙ ДЕШБОРД -->
   <div id="dashboard-screen" class="hidden max-w-4xl w-full">
     
-    <!-- TOP BAR -->
+    <!-- HEADER -->
     <header class="glass-panel p-6 rounded-[24px] mb-8 flex flex-wrap justify-between items-center gap-4">
       <div class="flex items-center gap-4">
         <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-brand-accent to-emerald-300 flex items-center justify-center font-display font-black text-black text-xl shadow-[0_0_15px_rgba(16,185,129,0.3)]">
@@ -112,7 +106,7 @@
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="font-display font-bold text-xl text-white">MISA Studio</h1>
+            <h1 class="font-display font-bold text-xl text-white">MISA Creator Hub</h1>
             <span class="inline-block w-2 h-2 rounded-full bg-brand-accent animate-pulse"></span>
           </div>
           <a href="index.html" target="_blank" class="text-xs text-zinc-400 hover:text-brand-accent transition flex items-center gap-1 mt-0.5">
@@ -121,26 +115,24 @@
         </div>
       </div>
       
-      <div class="flex items-center gap-3">
-        <button onclick="logout()" class="px-4 py-2 rounded-xl bg-zinc-800/80 hover:bg-red-500/20 text-zinc-400 hover:text-red-400 border border-zinc-700/60 text-xs font-mono transition">
-          Вийти
-        </button>
-      </div>
+      <button onclick="logout()" class="px-4 py-2 rounded-xl bg-zinc-800/80 hover:bg-red-500/20 text-zinc-400 hover:text-red-400 border border-zinc-700/60 text-xs font-mono transition">
+        Вийти
+      </button>
     </header>
 
-    <!-- ТАБИ ПЕРЕМИКАННЯ -->
+    <!-- ТАБИ -->
     <div class="flex gap-3 mb-6">
       <button id="tab-work" onclick="switchTab('work')" class="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-brand-accent text-black font-display font-bold text-sm tracking-wide transition-all shadow-[0_0_20px_rgba(16,185,129,0.25)]">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-        Нова робота
+        Нова робота (Карта)
       </button>
       <button id="tab-review" onclick="switchTab('review')" class="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-zinc-900/80 text-zinc-400 hover:text-white border border-zinc-800 font-display font-bold text-sm tracking-wide transition-all">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-        Новий відгук
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+        Скріншот відгуку (Proof)
       </button>
     </div>
 
-    <!-- ФОРМА 1: НОВА РОБОТА -->
+    <!-- ФОРМА 1: РОБОТА -->
     <form id="project-form" class="glass-panel p-8 md:p-10 rounded-[28px] space-y-6">
       <div>
         <label class="block text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2">Назва карти чи проєкту</label>
@@ -148,81 +140,83 @@
       </div>
 
       <div>
-        <label class="block text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2">Короткий опис локації</label>
+        <label class="block text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2">Опис карти</label>
         <textarea id="p-desc" rows="3" required placeholder="Опиши стиль освітлення, геометрію чи атмосферу карти..." class="w-full bg-black/50 border border-zinc-800 rounded-xl p-4 text-white placeholder:text-zinc-700 outline-none focus:border-brand-accent transition"></textarea>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-        <!-- ГОЛОВНА ОБКЛАДИНКА -->
-        <div class="relative group p-6 rounded-2xl border-2 border-dashed border-zinc-800 hover:border-brand-accent/50 bg-black/30 transition flex flex-col justify-between">
+        
+        <!-- DRAG AND DROP ДЛЯ ОБКЛАДИНКИ -->
+        <div id="drop-thumb" class="relative group p-6 rounded-2xl border-2 border-dashed border-zinc-800 hover:border-brand-accent/60 bg-black/30 transition flex flex-col justify-between cursor-pointer">
           <div>
-            <span class="inline-block px-2 py-0.5 rounded bg-brand-accent/20 text-brand-accent font-mono text-[11px] uppercase font-bold mb-2">Cover image</span>
-            <h4 class="font-display font-bold text-white text-base">Головна обкладинка</h4>
-            <p class="text-xs text-zinc-500 mt-1 mb-4">Буде на прев'ю картки в сітці</p>
+            <span class="inline-block px-2 py-0.5 rounded bg-brand-accent/20 text-brand-accent font-mono text-[11px] uppercase font-bold mb-2">Cover Image</span>
+            <h4 class="font-display font-bold text-white text-base">Головне фото</h4>
+            <p class="text-xs text-zinc-500 mt-1 mb-4">Перетягни сюди або клікни</p>
           </div>
           
-          <input type="file" id="p-thumb" accept="image/*" required class="hidden">
+          <input type="file" id="p-thumb" accept="image/*" class="hidden">
           
-          <!-- Прев'ю-контейнер -->
-          <label for="p-thumb" class="cursor-pointer block border border-zinc-700/60 rounded-xl p-4 text-center hover:bg-zinc-800/40 transition">
-            <div id="thumb-preview-box" class="flex flex-col items-center justify-center py-4">
-              <svg width="28" height="28" class="text-zinc-500 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-              <span class="text-xs font-mono text-brand-accent">Вибрати файл</span>
-            </div>
-            <img id="thumb-preview" class="hidden w-full h-36 object-cover rounded-lg">
-          </label>
+          <div id="thumb-preview-box" class="py-6 border border-zinc-800/80 rounded-xl flex flex-col items-center justify-center bg-zinc-900/30 group-hover:border-zinc-700 transition">
+            <svg width="32" height="32" class="text-zinc-500 mb-2 group-hover:text-brand-accent transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+            <span class="text-xs font-mono text-zinc-400">Кинь файл сюди</span>
+          </div>
+          
+          <img id="thumb-preview" class="hidden w-full h-36 object-cover rounded-xl border border-zinc-700">
         </div>
 
-        <!-- ГАЛЕРЕЯ -->
-        <div class="relative group p-6 rounded-2xl border-2 border-dashed border-zinc-800 hover:border-brand-accent/50 bg-black/30 transition flex flex-col justify-between">
+        <!-- DRAG AND DROP ДЛЯ ГАЛЕРЕЇ -->
+        <div id="drop-gallery" class="relative group p-6 rounded-2xl border-2 border-dashed border-zinc-800 hover:border-brand-accent/60 bg-black/30 transition flex flex-col justify-between cursor-pointer">
           <div>
-            <span class="inline-block px-2 py-0.5 rounded bg-brand-discord/20 text-brand-discord font-mono text-[11px] uppercase font-bold mb-2">Gallery set</span>
+            <span class="inline-block px-2 py-0.5 rounded bg-brand-discord/20 text-brand-discord font-mono text-[11px] uppercase font-bold mb-2">Gallery Set</span>
             <h4 class="font-display font-bold text-white text-base">Додаткові фото</h4>
-            <p class="text-xs text-zinc-500 mt-1 mb-4">Відкриватимуться у слайдері</p>
+            <p class="text-xs text-zinc-500 mt-1 mb-4">Перетягни пачку фото або клікни</p>
           </div>
 
           <input type="file" id="p-gallery" accept="image/*" multiple class="hidden">
 
-          <!-- Прев'ю-контейнер галереї -->
-          <label for="p-gallery" class="cursor-pointer block border border-zinc-700/60 rounded-xl p-4 text-center hover:bg-zinc-800/40 transition">
-            <div id="gallery-preview-box" class="flex flex-col items-center justify-center py-4">
-              <svg width="28" height="28" class="text-zinc-500 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
-              <span class="text-xs font-mono text-brand-discord">Вибрати декілька фото</span>
-            </div>
-            <div id="gallery-previews" class="hidden grid grid-cols-4 gap-2 pt-1 max-h-36 overflow-y-auto"></div>
-          </label>
+          <div id="gallery-preview-box" class="py-6 border border-zinc-800/80 rounded-xl flex flex-col items-center justify-center bg-zinc-900/30 group-hover:border-zinc-700 transition">
+            <svg width="32" height="32" class="text-zinc-500 mb-2 group-hover:text-brand-discord transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+            <span class="text-xs font-mono text-zinc-400">Кинь кілька файлів сюди</span>
+          </div>
+          
+          <div id="gallery-previews" class="hidden grid grid-cols-4 gap-2 pt-1 max-h-36 overflow-y-auto"></div>
         </div>
+
       </div>
 
       <button type="submit" id="p-submit" class="w-full py-4 bg-brand-accent hover:bg-[#0ea371] text-black font-display font-black tracking-wider uppercase rounded-xl transition-all duration-300 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]">
-        Опублікувати на сайт
+        Опублікувати роботу
       </button>
     </form>
 
-    <!-- ФОРМА 2: НОВИЙ ВІДГУК -->
+    <!-- ФОРМА 2: СКРІНШОТ ВІДГУКУ -->
     <form id="review-form" class="glass-panel p-8 md:p-10 rounded-[28px] space-y-6 hidden">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label class="block text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2">Хто замовив (Ім'я / Посада)</label>
-          <input type="text" id="r-author" required placeholder="наприклад: Studio Lead" class="w-full bg-black/50 border border-zinc-800 rounded-xl p-4 text-white font-display placeholder:text-zinc-700 outline-none focus:border-brand-accent transition">
-        </div>
-        <div>
-          <label class="block text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2">Студія чи команда</label>
-          <input type="text" id="r-role" required placeholder="наприклад: Void Devs" class="w-full bg-black/50 border border-zinc-800 rounded-xl p-4 text-white font-display placeholder:text-zinc-700 outline-none focus:border-brand-accent transition">
-        </div>
+      <div>
+        <label class="block text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2">Хто залишив (Ім'я клієнта або студія)</label>
+        <input type="text" id="r-author" placeholder="наприклад: Studio Lead / Void Devs" class="w-full bg-black/50 border border-zinc-800 rounded-xl p-4 text-white font-display placeholder:text-zinc-700 outline-none focus:border-brand-accent transition">
       </div>
 
-      <div>
-        <label class="block text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2">Текст відгуку</label>
-        <textarea id="r-text" rows="4" required placeholder="Встав сюди відгук замовника про твою роботу..." class="w-full bg-black/50 border border-zinc-800 rounded-xl p-4 text-white placeholder:text-zinc-700 outline-none focus:border-brand-accent transition"></textarea>
+      <!-- DRAG AND DROP ДЛЯ СКРІНШОТА -->
+      <div id="drop-review" class="p-8 rounded-2xl border-2 border-dashed border-zinc-800 hover:border-brand-accent/60 bg-black/30 transition text-center cursor-pointer">
+        <input type="file" id="r-image" accept="image/*" class="hidden">
+        
+        <div id="review-preview-box">
+          <div class="w-16 h-16 mx-auto rounded-full bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center text-brand-accent mb-3">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+          </div>
+          <h4 class="font-display font-bold text-white text-lg">Перетягни сюди скріншот відгуку</h4>
+          <p class="text-xs text-zinc-500 mt-1 font-mono">Скріншот чату Discord чи повідомлення клієнта</p>
+        </div>
+
+        <img id="review-preview" class="hidden max-h-64 mx-auto rounded-xl border border-zinc-700 object-contain shadow-xl">
       </div>
 
       <button type="submit" id="r-submit" class="w-full py-4 bg-brand-accent hover:bg-[#0ea371] text-black font-display font-black tracking-wider uppercase rounded-xl transition-all duration-300 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]">
-        Опублікувати відгук
+        Опублікувати скріншот відгуку
       </button>
     </form>
 
-    <!-- УСПІХ / ПОМИЛКА ТОСТ -->
+    <!-- TOAST -->
     <div id="status-toast" class="fixed bottom-8 right-8 z-50 transform translate-y-32 transition-transform duration-300 p-4 rounded-xl glass-panel flex items-center gap-3 border shadow-2xl">
       <span id="toast-icon"></span>
       <span id="toast-msg" class="text-sm font-medium"></span>
@@ -231,9 +225,7 @@
   </div>
 
   <script>
-    /* ==========================================================================
-       1. SUPABASE СЕСІЯ ТА НАЛАШТУВАННЯ
-       ========================================================================== */
+    // Твої підключені ключі
     const SUPABASE_URL = 'https://pqtyqtibywelkzdyinxq.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxdHlxdGlieXdlbGt6ZHlpbnhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0MTc0MDgsImV4cCI6MjEwNDk5MzQwOH0.p92uyLdQF4zSAGV3NRfA4HUapWNp7ZHBtB7HA09uydc';
 
@@ -248,7 +240,6 @@
     const authScreen = document.getElementById('auth-screen');
     const dashboardScreen = document.getElementById('dashboard-screen');
 
-    // Миттєвий автоматичний вхід, якщо вже входив раніше
     _supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
         authScreen.classList.add('hidden');
@@ -259,7 +250,6 @@
       }
     });
 
-    // Логін клієнта
     document.getElementById('login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('login-email').value.trim();
@@ -274,7 +264,7 @@
       const { error } = await _supabase.auth.signInWithPassword({ email, password });
 
       if (error) {
-        err.innerText = 'Невірні дані доступу до студії.';
+        err.innerText = 'Невірні дані входу.';
         err.classList.remove('hidden');
         btn.innerText = 'Увійти в кабінет';
         btn.disabled = false;
@@ -285,7 +275,6 @@
       await _supabase.auth.signOut();
     }
 
-    // Перемикання вкладок
     function switchTab(tab) {
       const pForm = document.getElementById('project-form');
       const rForm = document.getElementById('review-form');
@@ -306,38 +295,81 @@
     }
 
     /* ==========================================================================
-       2. ЖИВЕ ПРЕВ'Ю ЗАВАНТАЖЕНИХ ФОТО
+       РЕАЛІЗАЦІЯ DRAG AND DROP ДЛЯ ВСІХ ЗОН
        ========================================================================== */
-    // Прев'ю головного фото
-    document.getElementById('p-thumb').addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const preview = document.getElementById('thumb-preview');
-        preview.src = URL.createObjectURL(file);
-        preview.classList.remove('hidden');
-        document.getElementById('thumb-preview-box').classList.add('hidden');
-      }
+    let selectedThumb = null;
+    let selectedGallery = [];
+    let selectedReviewImg = null;
+
+    function setupDragAndDrop(dropZoneId, inputId, onFilesSelected) {
+      const dropZone = document.getElementById(dropZoneId);
+      const input = document.getElementById(inputId);
+
+      // Клік по зоні відкриває вибір файлу
+      dropZone.addEventListener('click', () => input.click());
+
+      input.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+          onFilesSelected(Array.from(e.target.files));
+        }
+      });
+
+      ['dragenter', 'dragover'].forEach(name => {
+        dropZone.addEventListener(name, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.add('drop-active');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(name => {
+        dropZone.addEventListener(name, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.remove('drop-active');
+        });
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          onFilesSelected(Array.from(e.dataTransfer.files));
+        }
+      });
+    }
+
+    // 1. Дроп головного фото
+    setupDragAndDrop('drop-thumb', 'p-thumb', (files) => {
+      selectedThumb = files[0];
+      const preview = document.getElementById('thumb-preview');
+      preview.src = URL.createObjectURL(selectedThumb);
+      preview.classList.remove('hidden');
+      document.getElementById('thumb-preview-box').classList.add('hidden');
     });
 
-    // Прев'ю галереї
-    document.getElementById('p-gallery').addEventListener('change', (e) => {
-      const files = Array.from(e.target.files);
+    // 2. Дроп галереї
+    setupDragAndDrop('drop-gallery', 'p-gallery', (files) => {
+      selectedGallery = files;
       const container = document.getElementById('gallery-previews');
       container.innerHTML = '';
-
-      if (files.length > 0) {
-        files.forEach(f => {
-          const img = document.createElement('img');
-          img.src = URL.createObjectURL(f);
-          img.className = 'w-full h-16 object-cover rounded-lg border border-zinc-700';
-          container.appendChild(img);
-        });
-        container.classList.remove('hidden');
-        document.getElementById('gallery-preview-box').classList.add('hidden');
-      }
+      files.forEach(f => {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(f);
+        img.className = 'w-full h-16 object-cover rounded-lg border border-zinc-700';
+        container.appendChild(img);
+      });
+      container.classList.remove('hidden');
+      document.getElementById('gallery-preview-box').classList.add('hidden');
     });
 
-    // Сповіщення (Toast)
+    // 3. Дроп скріншота відгуку
+    setupDragAndDrop('drop-review', 'r-image', (files) => {
+      selectedReviewImg = files[0];
+      const preview = document.getElementById('review-preview');
+      preview.src = URL.createObjectURL(selectedReviewImg);
+      preview.classList.remove('hidden');
+      document.getElementById('review-preview-box').classList.add('hidden');
+    });
+
     function showToast(text, isError = false) {
       const toast = document.getElementById('status-toast');
       const msg = document.getElementById('toast-msg');
@@ -355,9 +387,6 @@
       setTimeout(() => toast.classList.add('translate-y-32'), 4000);
     }
 
-    /* ==========================================================================
-       3. ЗАВАНТАЖЕННЯ НА SUPABASE
-       ========================================================================== */
     async function uploadImage(file) {
       const ext = file.name.split('.').pop();
       const fileName = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${ext}`;
@@ -367,20 +396,23 @@
       return data.publicUrl;
     }
 
-    // Відправка проєкту
+    // ВІДПРАВКА ПРОЄКТУ
     document.getElementById('project-form').addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (!selectedThumb) {
+        showToast('Будь ласка, додай головне фото!', true);
+        return;
+      }
+
       const btn = document.getElementById('p-submit');
-      btn.innerText = 'Завантаження медіа...';
+      btn.innerText = 'Завантаження на сервер...';
       btn.disabled = true;
 
       try {
-        const thumbFile = document.getElementById('p-thumb').files[0];
-        const thumbUrl = await uploadImage(thumbFile);
-        const galleryFiles = document.getElementById('p-gallery').files;
+        const thumbUrl = await uploadImage(selectedThumb);
         const galleryUrls = [thumbUrl];
 
-        for (let f of galleryFiles) {
+        for (let f of selectedGallery) {
           const url = await uploadImage(f);
           galleryUrls.push(url);
         }
@@ -394,8 +426,10 @@
 
         if (error) throw error;
 
-        showToast('Карту успішно опубліковано в портфоліо!');
+        showToast('Роботу опубліковано!');
         document.getElementById('project-form').reset();
+        selectedThumb = null;
+        selectedGallery = [];
         document.getElementById('thumb-preview').classList.add('hidden');
         document.getElementById('thumb-preview-box').classList.remove('hidden');
         document.getElementById('gallery-previews').classList.add('hidden');
@@ -404,34 +438,43 @@
       } catch (err) {
         showToast('Помилка: ' + err.message, true);
       } finally {
-        btn.innerText = 'Опублікувати на сайт';
+        btn.innerText = 'Опублікувати роботу';
         btn.disabled = false;
       }
     });
 
-    // Відправка відгуку
+    // ВІДПРАВКА СКРІНШОТА ВІДГУКУ
     document.getElementById('review-form').addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (!selectedReviewImg) {
+        showToast('Перетягни скріншот відгуку!', true);
+        return;
+      }
+
       const btn = document.getElementById('r-submit');
-      btn.innerText = 'Публікація...';
+      btn.innerText = 'Публікація скріншота...';
       btn.disabled = true;
 
       try {
+        const imgUrl = await uploadImage(selectedReviewImg);
+
         const { error } = await _supabase.from('reviews').insert([{
-          author: document.getElementById('r-author').value,
-          role: document.getElementById('r-role').value,
-          text: document.getElementById('r-text').value
+          author: document.getElementById('r-author').value || 'Discord Client',
+          image: imgUrl
         }]);
 
         if (error) throw error;
 
-        showToast('Відгук опубліковано!');
+        showToast('Скріншот відгуку опубліковано!');
         document.getElementById('review-form').reset();
+        selectedReviewImg = null;
+        document.getElementById('review-preview').classList.add('hidden');
+        document.getElementById('review-preview-box').classList.remove('hidden');
 
       } catch (err) {
         showToast('Помилка: ' + err.message, true);
       } finally {
-        btn.innerText = 'Опублікувати відгук';
+        btn.innerText = 'Опублікувати скріншот відгуку';
         btn.disabled = false;
       }
     });
