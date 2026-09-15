@@ -7,7 +7,7 @@
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Бібліотека для супер-плавного Drag-and-Drop -->
+  <!-- Бібліотека для плавного Drag-and-Drop -->
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
   
   <style>
@@ -36,9 +36,7 @@
       transform: scale(1.01);
     }
 
-    /* === СТИЛІ ДЛЯ ПЛАВНОГО ТА ЗРОЗУМІЛОГО ПЕРЕТЯГУВАННЯ === */
-    
-    /* Слот, куди впаде елемент (місце висадки) */
+    /* === СТИЛІ ДЛЯ СОРТУВАННЯ === */
     .sort-ghost {
       opacity: 0.3 !important;
       background: rgba(16, 185, 129, 0.08) !important;
@@ -47,12 +45,10 @@
       transform: scale(0.96) !important;
     }
 
-    /* Елемент під час захоплення курсором */
     .sort-chosen {
       cursor: grabbing !important;
     }
 
-    /* Елемент, який летить за курсором */
     .sort-drag, .sortable-fallback {
       opacity: 0.95 !important;
       transform: scale(1.04) rotate(1.5deg) !important;
@@ -84,7 +80,7 @@
 </head>
 <body class="relative min-h-screen flex flex-col justify-center items-center p-4 md:p-10">
 
-  <!-- СІТКА І НЕОНОВЕ СЯЙВО -->
+  <!-- СІТКА І ФОНОВЕ СЯЙВО -->
   <div class="fixed inset-0 pointer-events-none z-[-1]">
     <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff06_1px,transparent_1px),linear-gradient(to_bottom,#ffffff06_1px,transparent_1px)] bg-[size:32px_32px]"></div>
     <div class="absolute top-1/4 left-1/4 w-[40vw] h-[40vw] bg-brand-accent/10 rounded-full blur-[160px]"></div>
@@ -168,12 +164,12 @@
     <form id="project-form" class="glass-panel p-8 md:p-10 rounded-[28px] space-y-6">
       <div>
         <label class="block text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2">Назва карти чи проєкту</label>
-        <input type="text" id="p-title" required placeholder="наприклад: Neon Cyber District" class="w-full bg-black/50 border border-zinc-800 rounded-xl p-4 text-white text-lg font-display placeholder:text-zinc-700 outline-none focus:border-brand-accent transition">
+        <input type="text" id="p-title" required placeholder="наприклад: Cyberpunk Alley 2077" class="w-full bg-black/50 border border-zinc-800 rounded-xl p-4 text-white text-lg font-display placeholder:text-zinc-700 outline-none focus:border-brand-accent transition">
       </div>
 
       <div>
         <label class="block text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2">Опис карти</label>
-        <textarea id="p-desc" rows="3" required placeholder="Опиши стиль освітлення, атмосферу..." class="w-full bg-black/50 border border-zinc-800 rounded-xl p-4 text-white placeholder:text-zinc-700 outline-none focus:border-brand-accent transition"></textarea>
+        <textarea id="p-desc" rows="3" required placeholder="Опиши стиль освітлення, атмосферу, оптимізацію..." class="w-full bg-black/50 border border-zinc-800 rounded-xl p-4 text-white placeholder:text-zinc-700 outline-none focus:border-brand-accent transition"></textarea>
       </div>
 
       <!-- ЗОНА ЗАВАНТАЖЕННЯ ЗОБРАЖЕНЬ -->
@@ -181,20 +177,18 @@
         <div class="flex justify-between items-center">
           <div>
             <h4 class="font-display font-bold text-white text-base">Фотографії проєкту</h4>
-            <p class="text-xs text-zinc-500">Перше фото — завжди обкладинка. Перетягуй їх для зміни порядку або видаляй через ✕</p>
+            <p class="text-xs text-zinc-500">Перше фото — обкладинка. Перетягуйте для зміни порядку. (Фото стискаються у WebP автоматично!)</p>
           </div>
           <span id="new-images-count" class="text-xs font-mono text-brand-accent">0 фото додано</span>
         </div>
 
-        <!-- DROPZONE -->
         <div id="drop-gallery" class="p-8 rounded-2xl border-2 border-dashed border-zinc-800 hover:border-brand-accent/60 bg-black/30 transition text-center cursor-pointer">
           <input type="file" id="p-gallery" accept="image/*" multiple class="hidden">
           <svg width="36" height="36" class="text-zinc-500 mx-auto mb-2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
-          <div class="font-display font-bold text-sm text-white pointer-events-none">Перетягни фото сюди або клікни</div>
-          <p class="text-xs text-zinc-500 font-mono mt-1 pointer-events-none">Можна додавати партіями — вони накопичуються</p>
+          <div class="font-display font-bold text-sm text-white pointer-events-none">Перетягни рендери сюди або клікни</div>
+          <p class="text-xs text-zinc-500 font-mono mt-1 pointer-events-none">PNG / JPG / WebP накопичуються у списку</p>
         </div>
 
-        <!-- СІТКА МІНІАТЮР З ПЛАВНИМ СОРТУВАННЯМ -->
         <div id="new-gallery-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 pt-2 min-h-[50px]"></div>
       </div>
 
@@ -218,12 +212,12 @@
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
           </div>
           <h4 class="font-display font-bold text-white text-lg">Перетягни скріншот відгуку</h4>
-          <p class="text-xs text-zinc-500 mt-1 font-mono">Скріншот чату Discord чи повідомлення</p>
+          <p class="text-xs text-zinc-500 mt-1 font-mono">Скріншот чату Discord чи відгуку замовника</p>
         </div>
 
         <div id="review-preview-wrapper" class="hidden relative inline-block">
           <img id="review-preview" class="max-h-64 mx-auto rounded-xl border border-zinc-700 object-contain shadow-xl pointer-events-none">
-          <button type="button" onclick="clearReviewScreenshot(event)" class="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center font-bold text-sm shadow-lg z-10">✕</button>
+          <button type="button" onclick="clearReviewScreenshot(event)" class="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center font-bold text-sm shadow-lg z-10" title="Видалити">✕</button>
         </div>
       </div>
 
@@ -235,12 +229,12 @@
     <!-- ВКЛАДКА 3: КЕРУВАННЯ ПОРЯДКОМ ТА РЕДАГУВАННЯ -->
     <div id="order-section" class="glass-panel p-8 md:p-10 rounded-[28px] space-y-10 hidden">
       
-      <!-- Сортування та редагування робіт -->
+      <!-- Роботи -->
       <div>
         <div class="flex justify-between items-center mb-4">
           <div>
             <h3 class="font-display font-bold text-xl text-white">Список робіт</h3>
-            <p class="text-xs text-zinc-400">Хапай та перетягуй картки для зміни порядку. Натискай «Редагувати», щоб змінити фотографії</p>
+            <p class="text-xs text-zinc-400">Хапай та перетягуй картки для зміни черговості. Натискай «Редагувати», щоб змінити опис або фото</p>
           </div>
           <span id="projects-save-status" class="text-xs font-mono text-brand-accent hidden">✓ Порядок збережено</span>
         </div>
@@ -308,13 +302,11 @@
           <span id="edit-images-count" class="text-xs font-mono text-brand-accent">0 фото</span>
         </div>
 
-        <!-- DROPZONE ДЛЯ ДОДАВАННЯ ЩЕ ФОТО В ЦЕЙ ПРОЄКТ -->
         <div id="drop-edit-add" class="p-4 rounded-xl border-2 border-dashed border-zinc-800 hover:border-brand-accent bg-black/30 text-center cursor-pointer transition">
           <input type="file" id="edit-add-files" accept="image/*" multiple class="hidden">
           <span class="text-xs font-mono text-zinc-400 pointer-events-none">+ Перетягни сюди нові фото, щоб додати їх до цього проєкту</span>
         </div>
 
-        <!-- СІТКА ЗОБРАЖЕНЬ ПРОЄКТУ З ПЛАВНИМ СОРТУВАННЯМ -->
         <div id="edit-images-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 pt-2 min-h-[50px]"></div>
       </div>
 
@@ -412,7 +404,85 @@
     }
 
     /* ==========================================================================
-       1. СТВОРЕННЯ НОВОГО ПРОЄКТУ (ПЛАВНЕ ПЕРЕТЯГУВАННЯ ФОТО)
+       АВТОМАТИЧНА ОПТИМІЗАЦІЯ ЗОБРАЖЕНЬ (CANVAS -> WEBP)
+       ========================================================================== */
+    function compressImage(file, maxWidth = 1920, maxHeight = 1080, quality = 0.82) {
+      return new Promise((resolve) => {
+        // Пропускаємо SVG та GIF анімації
+        if (!file.type || !file.type.startsWith('image/') || file.type === 'image/svg+xml' || file.type === 'image/gif') {
+          return resolve(file);
+        }
+
+        const img = new Image();
+        const blobUrl = URL.createObjectURL(file);
+
+        img.onload = () => {
+          URL.revokeObjectURL(blobUrl);
+
+          let width = img.width;
+          let height = img.height;
+
+          // Пропорційне масштабування до лімітів
+          if (width > maxWidth || height > maxHeight) {
+            if (width / height > maxWidth / maxHeight) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            } else {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext('2d');
+          // Плавне інтерполювання
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          ctx.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob((blob) => {
+            if (!blob) {
+              resolve(file); // Якщо сталася помилка — відправляємо оригінал
+              return;
+            }
+            resolve(blob);
+          }, 'image/webp', quality);
+        };
+
+        img.onerror = () => {
+          URL.revokeObjectURL(blobUrl);
+          resolve(file);
+        };
+
+        img.src = blobUrl;
+      });
+    }
+
+    async function uploadImage(file) {
+      // 1. Стискаємо фото перед завантаженням у хмару
+      const processedBlob = await compressImage(file, 1920, 1080, 0.82);
+      const isWebP = processedBlob.type === 'image/webp';
+      
+      const ext = isWebP ? 'webp' : (file.name ? file.name.split('.').pop() : 'png');
+      const fileName = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${ext}`;
+
+      const { error } = await _supabase.storage
+        .from('portfolio')
+        .upload(fileName, processedBlob, {
+          contentType: isWebP ? 'image/webp' : file.type,
+          cacheControl: '31536000'
+        });
+
+      if (error) throw error;
+      const { data } = _supabase.storage.from('portfolio').getPublicUrl(fileName);
+      return data.publicUrl;
+    }
+
+    /* ==========================================================================
+       1. СТВОРЕННЯ НОВОГО ПРОЄКТУ
        ========================================================================== */
     let newProjectPhotos = [];
 
@@ -472,7 +542,6 @@
       renderNewProjectPhotos();
     });
 
-    // Оновлення бейджа обкладинки для першого фото
     function updateCoverBadges(container) {
       const cards = container.children;
       for (let i = 0; i < cards.length; i++) {
@@ -503,7 +572,6 @@
         list.appendChild(card);
       });
 
-      // Плавний Sortable для фото
       if (list._sortable) list._sortable.destroy();
       list._sortable = new Sortable(list, {
         animation: 200,
@@ -525,21 +593,12 @@
     function removeNewPhoto(id) {
       const idx = newProjectPhotos.findIndex(p => p.id === id);
       if (idx !== -1) {
-        if (newProjectPhotos[idx].url.startsWith('blob:')) {
+        if (newProjectPhotos[idx].url && newProjectPhotos[idx].url.startsWith('blob:')) {
           URL.revokeObjectURL(newProjectPhotos[idx].url);
         }
         newProjectPhotos.splice(idx, 1);
         renderNewProjectPhotos();
       }
-    }
-
-    async function uploadImage(file) {
-      const ext = file.name.split('.').pop();
-      const fileName = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${ext}`;
-      const { error } = await _supabase.storage.from('portfolio').upload(fileName, file);
-      if (error) throw error;
-      const { data } = _supabase.storage.from('portfolio').getPublicUrl(fileName);
-      return data.publicUrl;
     }
 
     document.getElementById('project-form').addEventListener('submit', async (e) => {
@@ -550,21 +609,23 @@
       }
 
       const btn = document.getElementById('p-submit');
-      btn.innerText = 'Завантаження медіа...';
       btn.disabled = true;
 
       try {
         const uploadedUrls = [];
-        for (let item of newProjectPhotos) {
-          const url = await uploadImage(item.file);
+        const total = newProjectPhotos.length;
+
+        for (let i = 0; i < total; i++) {
+          btn.innerText = `Оптимізація та вивантаження (${i + 1}/${total})...`;
+          const url = await uploadImage(newProjectPhotos[i].file);
           uploadedUrls.push(url);
         }
 
         const thumbUrl = uploadedUrls[0];
 
         const { error } = await _supabase.from('projects').insert([{
-          title: document.getElementById('p-title').value,
-          description: document.getElementById('p-desc').value,
+          title: document.getElementById('p-title').value.trim(),
+          description: document.getElementById('p-desc').value.trim(),
           thumb: thumbUrl,
           gallery: uploadedUrls,
           sort_order: 0
@@ -574,8 +635,10 @@
 
         showToast('Проєкт успішно створено!');
         document.getElementById('project-form').reset();
+        
+        // Звільняємо пам'ять blob URL
         newProjectPhotos.forEach(p => {
-          if (p.url.startsWith('blob:')) URL.revokeObjectURL(p.url);
+          if (p.url && p.url.startsWith('blob:')) URL.revokeObjectURL(p.url);
         });
         newProjectPhotos = [];
         renderNewProjectPhotos();
@@ -594,8 +657,14 @@
     let selectedReviewImg = null;
 
     setupDragAndDrop('drop-review', 'r-image', (files) => {
-      selectedReviewImg = files[0];
+      if (!files || files.length === 0) return;
+      
       const preview = document.getElementById('review-preview');
+      if (preview.src && preview.src.startsWith('blob:')) {
+        URL.revokeObjectURL(preview.src);
+      }
+
+      selectedReviewImg = files[0];
       preview.src = URL.createObjectURL(selectedReviewImg);
       document.getElementById('review-preview-wrapper').classList.remove('hidden');
       document.getElementById('review-preview-box').classList.add('hidden');
@@ -622,14 +691,14 @@
       }
 
       const btn = document.getElementById('r-submit');
-      btn.innerText = 'Публікація...';
+      btn.innerText = 'Оптимізація та публікація...';
       btn.disabled = true;
 
       try {
         const imgUrl = await uploadImage(selectedReviewImg);
 
         const { error } = await _supabase.from('reviews').insert([{
-          author: document.getElementById('r-author').value || 'Discord Client',
+          author: document.getElementById('r-author').value.trim() || 'Discord Client',
           image: imgUrl,
           sort_order: 0
         }]);
@@ -653,17 +722,22 @@
        ========================================================================== */
     let allProjectsList = [];
     let currentEditProject = null;
-    let isDraggingActive = false; // Прапорець, щоб при перетягуванні не відкривалася модалка!
+    let isDraggingActive = false;
+
+    // Хелпер приведення ID до правильного типу
+    const parseId = (raw) => (!isNaN(raw) && String(raw).trim() !== '' ? Number(raw) : raw);
 
     async function loadOrderItems() {
       const pList = document.getElementById('projects-order-list');
       const rList = document.getElementById('reviews-order-list');
 
-      const { data: projects } = await _supabase
+      const { data: projects, error: pErr } = await _supabase
         .from('projects')
         .select('*')
         .order('sort_order', { ascending: true })
         .order('created_at', { ascending: false });
+
+      if (pErr) showToast('Помилка завантаження проєктів', true);
 
       allProjectsList = projects || [];
       pList.innerHTML = '';
@@ -686,13 +760,12 @@
             <div class="flex justify-between items-center pt-1">
               <span class="font-bold text-sm text-white truncate max-w-[150px] pointer-events-none" title="${p.title}">${p.title}</span>
               <div class="flex gap-1">
-                <button type="button" onclick="safeOpenEditModal(${p.id})" class="text-xs text-zinc-400 hover:text-brand-accent p-1.5 hover:bg-zinc-800 rounded-lg transition" title="Редагувати">✏️</button>
-                <button type="button" onclick="deleteItem('projects', ${p.id})" class="text-xs text-red-400 hover:text-red-300 p-1.5 hover:bg-red-500/10 rounded-lg transition" title="Видалити">🗑️</button>
+                <button type="button" onclick="safeOpenEditModal('${p.id}')" class="text-xs text-zinc-400 hover:text-brand-accent p-1.5 hover:bg-zinc-800 rounded-lg transition" title="Редагувати">✏️</button>
+                <button type="button" onclick="deleteItem('projects', '${p.id}')" class="text-xs text-red-400 hover:text-red-300 p-1.5 hover:bg-red-500/10 rounded-lg transition" title="Видалити">🗑️</button>
               </div>
             </div>
           `;
           
-          // Клік по картці відкриває модалку тільки якщо ми її НЕ перетягували
           card.addEventListener('click', (e) => {
             if (e.target.closest('button')) return;
             safeOpenEditModal(p.id);
@@ -701,7 +774,6 @@
           pList.appendChild(card);
         });
 
-        // Плавний Sortable для карток проєктів
         if (pList._sortable) pList._sortable.destroy();
         pList._sortable = new Sortable(pList, {
           animation: 200,
@@ -712,9 +784,7 @@
           chosenClass: 'sort-chosen',
           dragClass: 'sort-drag',
           filter: 'button',
-          onStart: () => {
-            isDraggingActive = true;
-          },
+          onStart: () => { isDraggingActive = true; },
           onEnd: async () => {
             setTimeout(() => { isDraggingActive = false; }, 100);
             await saveNewOrder(pList, 'projects');
@@ -723,11 +793,13 @@
       }
 
       // Відгуки
-      const { data: reviews } = await _supabase
+      const { data: reviews, error: rErr } = await _supabase
         .from('reviews')
         .select('*')
         .order('sort_order', { ascending: true })
         .order('created_at', { ascending: false });
+
+      if (rErr) showToast('Помилка завантаження відгуків', true);
 
       rList.innerHTML = '';
       if (!reviews || reviews.length === 0) {
@@ -744,13 +816,12 @@
             </div>
             <div class="flex justify-between items-center">
               <span class="text-xs text-zinc-300 truncate max-w-[100px] pointer-events-none">${r.author || 'Proof'}</span>
-              <button type="button" onclick="deleteItem('reviews', ${r.id})" class="text-xs text-red-400 hover:text-red-300 p-1 hover:bg-red-500/10 rounded-lg transition">🗑️</button>
+              <button type="button" onclick="deleteItem('reviews', '${r.id}')" class="text-xs text-red-400 hover:text-red-300 p-1 hover:bg-red-500/10 rounded-lg transition">🗑️</button>
             </div>
           `;
           rList.appendChild(card);
         });
 
-        // Плавний Sortable для відгуків
         if (rList._sortable) rList._sortable.destroy();
         rList._sortable = new Sortable(rList, {
           animation: 200,
@@ -768,17 +839,19 @@
       }
     }
 
-    // Безпечне відкриття редагування без помилкового спрацювання після перетягування
     function safeOpenEditModal(projectId) {
       if (isDraggingActive) return;
       openEditModal(projectId);
     }
 
     function openEditModal(projectId) {
-      const proj = allProjectsList.find(p => p.id === projectId);
+      const parsed = parseId(projectId);
+      const proj = allProjectsList.find(p => p.id === parsed);
       if (!proj) return;
 
-      const galleryList = Array.isArray(proj.gallery) ? proj.gallery : [proj.thumb];
+      const galleryList = Array.isArray(proj.gallery) && proj.gallery.length > 0 
+        ? proj.gallery 
+        : [proj.thumb];
 
       currentEditProject = {
         id: proj.id,
@@ -801,14 +874,13 @@
     function closeEditModal() {
       if (currentEditProject) {
         currentEditProject.images.forEach(img => {
-          if (img.url.startsWith('blob:')) URL.revokeObjectURL(img.url);
+          if (img.url && img.url.startsWith('blob:')) URL.revokeObjectURL(img.url);
         });
       }
       document.getElementById('edit-modal').classList.add('hidden');
       currentEditProject = null;
     }
 
-    // Додавання нових фото під час редагування
     setupDragAndDrop('drop-edit-add', 'edit-add-files', (files) => {
       if (!currentEditProject) return;
       const newItems = files.map(file => ({
@@ -841,7 +913,6 @@
         grid.appendChild(card);
       });
 
-      // Плавний Sortable для фото в модалці редагування
       if (grid._sortable) grid._sortable.destroy();
       grid._sortable = new Sortable(grid, {
         animation: 200,
@@ -867,7 +938,7 @@
       }
       const idx = currentEditProject.images.findIndex(img => img.id === id);
       if (idx !== -1) {
-        if (currentEditProject.images[idx].url.startsWith('blob:')) {
+        if (currentEditProject.images[idx].url && currentEditProject.images[idx].url.startsWith('blob:')) {
           URL.revokeObjectURL(currentEditProject.images[idx].url);
         }
         currentEditProject.images.splice(idx, 1);
@@ -883,14 +954,16 @@
       }
 
       const btn = document.getElementById('save-edit-btn');
-      btn.innerText = 'Збереження змін...';
       btn.disabled = true;
 
       try {
         const finalUrls = [];
+        const total = currentEditProject.images.length;
 
-        for (let item of currentEditProject.images) {
+        for (let i = 0; i < total; i++) {
+          const item = currentEditProject.images[i];
           if (item.file) {
+            btn.innerText = `Стиснення та завантаження (${i + 1}/${total})...`;
             const url = await uploadImage(item.file);
             finalUrls.push(url);
           } else {
@@ -910,7 +983,7 @@
             thumb: newThumb,
             gallery: finalUrls
           })
-          .eq('id', currentEditProject.id);
+          .eq('id', parseId(currentEditProject.id));
 
         if (error) throw error;
 
@@ -939,7 +1012,7 @@
         return _supabase
           .from(table)
           .update({ sort_order: index })
-          .eq('id', card.dataset.id);
+          .eq('id', parseId(card.dataset.id));
       });
 
       await Promise.all(updates);
@@ -952,7 +1025,7 @@
 
     async function deleteItem(table, id) {
       if (!confirm('Видалити назавжди?')) return;
-      const { error } = await _supabase.from(table).delete().eq('id', id);
+      const { error } = await _supabase.from(table).delete().eq('id', parseId(id));
       if (error) {
         showToast('Помилка: ' + error.message, true);
       } else {
