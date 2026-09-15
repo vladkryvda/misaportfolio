@@ -23,7 +23,7 @@
     }
 
     .glass-panel {
-      background: rgba(18, 18, 20, 0.7);
+      background: rgba(18, 18, 20, 0.75);
       backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
@@ -35,7 +35,8 @@
     }
 
     .dragging {
-      opacity: 0.4;
+      opacity: 0.35;
+      transform: scale(0.95);
       border-color: #10b981 !important;
     }
   </style>
@@ -60,7 +61,7 @@
 </head>
 <body class="relative min-h-screen flex flex-col justify-center items-center p-4 md:p-10">
 
-  <!-- СІТКА І СЯЙВО -->
+  <!-- СІТКА І НЕОНОВЕ СЯЙВО -->
   <div class="fixed inset-0 pointer-events-none z-[-1]">
     <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff06_1px,transparent_1px),linear-gradient(to_bottom,#ffffff06_1px,transparent_1px)] bg-[size:32px_32px]"></div>
     <div class="absolute top-1/4 left-1/4 w-[40vw] h-[40vw] bg-brand-accent/10 rounded-full blur-[160px]"></div>
@@ -136,7 +137,7 @@
       </button>
       <button id="tab-order" onclick="switchTab('order')" class="flex items-center gap-2 px-5 py-3 rounded-xl bg-zinc-900/80 text-zinc-400 hover:text-white border border-zinc-800 font-display font-bold text-sm tracking-wide transition-all">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-        Керування порядком & Видалення
+        Керування & Редагування
       </button>
     </div>
 
@@ -149,41 +150,33 @@
 
       <div>
         <label class="block text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2">Опис карти</label>
-        <textarea id="p-desc" rows="3" required placeholder="Опиши стиль освітлення, геометрію чи атмосферу карти..." class="w-full bg-black/50 border border-zinc-800 rounded-xl p-4 text-white placeholder:text-zinc-700 outline-none focus:border-brand-accent transition"></textarea>
+        <textarea id="p-desc" rows="3" required placeholder="Опиши стиль освітлення, атмосферу..." class="w-full bg-black/50 border border-zinc-800 rounded-xl p-4 text-white placeholder:text-zinc-700 outline-none focus:border-brand-accent transition"></textarea>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-        <div id="drop-thumb" class="relative group p-6 rounded-2xl border-2 border-dashed border-zinc-800 hover:border-brand-accent/60 bg-black/30 transition flex flex-col justify-between cursor-pointer">
+      <!-- ЗОНА ЗАВАНТАЖЕННЯ ЗОБРАЖЕНЬ З НАКОПИЧЕННЯМ І ХРЕСТИКАМИ -->
+      <div class="space-y-4">
+        <div class="flex justify-between items-center">
           <div>
-            <span class="inline-block px-2 py-0.5 rounded bg-brand-accent/20 text-brand-accent font-mono text-[11px] uppercase font-bold mb-2">Cover Image</span>
-            <h4 class="font-display font-bold text-white text-base">Головне фото</h4>
-            <p class="text-xs text-zinc-500 mt-1 mb-4">Перетягни сюди або клікни</p>
+            <h4 class="font-display font-bold text-white text-base">Фотографії проєкту</h4>
+            <p class="text-xs text-zinc-500">Перше фото стане обкладинкою. Перетягуй їх між собою або видаляй через ✕</p>
           </div>
-          <input type="file" id="p-thumb" accept="image/*" class="hidden">
-          <div id="thumb-preview-box" class="py-6 border border-zinc-800/80 rounded-xl flex flex-col items-center justify-center bg-zinc-900/30 group-hover:border-zinc-700 transition">
-            <svg width="32" height="32" class="text-zinc-500 mb-2 group-hover:text-brand-accent transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-            <span class="text-xs font-mono text-zinc-400">Кинь файл сюди</span>
-          </div>
-          <img id="thumb-preview" class="hidden w-full h-36 object-cover rounded-xl border border-zinc-700">
+          <span id="new-images-count" class="text-xs font-mono text-brand-accent">0 фото додано</span>
         </div>
 
-        <div id="drop-gallery" class="relative group p-6 rounded-2xl border-2 border-dashed border-zinc-800 hover:border-brand-accent/60 bg-black/30 transition flex flex-col justify-between cursor-pointer">
-          <div>
-            <span class="inline-block px-2 py-0.5 rounded bg-brand-discord/20 text-brand-discord font-mono text-[11px] uppercase font-bold mb-2">Gallery Set</span>
-            <h4 class="font-display font-bold text-white text-base">Додаткові фото</h4>
-            <p class="text-xs text-zinc-500 mt-1 mb-4">Перетягни пачку фото або клікни</p>
-          </div>
+        <!-- DROPZONE -->
+        <div id="drop-gallery" class="p-8 rounded-2xl border-2 border-dashed border-zinc-800 hover:border-brand-accent/60 bg-black/30 transition text-center cursor-pointer">
           <input type="file" id="p-gallery" accept="image/*" multiple class="hidden">
-          <div id="gallery-preview-box" class="py-6 border border-zinc-800/80 rounded-xl flex flex-col items-center justify-center bg-zinc-900/30 group-hover:border-zinc-700 transition">
-            <svg width="32" height="32" class="text-zinc-500 mb-2 group-hover:text-brand-discord transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
-            <span class="text-xs font-mono text-zinc-400">Кинь кілька файлів сюди</span>
-          </div>
-          <div id="gallery-previews" class="hidden grid grid-cols-4 gap-2 pt-1 max-h-36 overflow-y-auto"></div>
+          <svg width="36" height="36" class="text-zinc-500 mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+          <div class="font-display font-bold text-sm text-white">Перетягни фото сюди або клікни</div>
+          <p class="text-xs text-zinc-500 font-mono mt-1">Можна додавати партіями — вони не зникатимуть</p>
         </div>
+
+        <!-- СІТКА МІНІАТЮР З ХРЕСТИКАМИ ТА ПЕРЕТЯГУВАННЯМ -->
+        <div id="new-gallery-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 pt-2"></div>
       </div>
 
       <button type="submit" id="p-submit" class="w-full py-4 bg-brand-accent hover:bg-[#0ea371] text-black font-display font-black tracking-wider uppercase rounded-xl transition-all duration-300 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]">
-        Опублікувати роботу
+        Опублікувати проєкт
       </button>
     </form>
 
@@ -194,32 +187,37 @@
         <input type="text" id="r-author" placeholder="наприклад: Studio Lead / Void Devs" class="w-full bg-black/50 border border-zinc-800 rounded-xl p-4 text-white font-display placeholder:text-zinc-700 outline-none focus:border-brand-accent transition">
       </div>
 
-      <div id="drop-review" class="p-8 rounded-2xl border-2 border-dashed border-zinc-800 hover:border-brand-accent/60 bg-black/30 transition text-center cursor-pointer">
+      <div id="drop-review" class="p-8 rounded-2xl border-2 border-dashed border-zinc-800 hover:border-brand-accent/60 bg-black/30 transition text-center cursor-pointer relative group">
         <input type="file" id="r-image" accept="image/*" class="hidden">
+        
         <div id="review-preview-box">
           <div class="w-16 h-16 mx-auto rounded-full bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center text-brand-accent mb-3">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
           </div>
-          <h4 class="font-display font-bold text-white text-lg">Перетягни сюди скріншот відгуку</h4>
-          <p class="text-xs text-zinc-500 mt-1 font-mono">Скріншот чату Discord чи замовлення</p>
+          <h4 class="font-display font-bold text-white text-lg">Перетягни скріншот відгуку</h4>
+          <p class="text-xs text-zinc-500 mt-1 font-mono">Скріншот чату Discord чи повідомлення</p>
         </div>
-        <img id="review-preview" class="hidden max-h-64 mx-auto rounded-xl border border-zinc-700 object-contain shadow-xl">
+
+        <div id="review-preview-wrapper" class="hidden relative inline-block">
+          <img id="review-preview" class="max-h-64 mx-auto rounded-xl border border-zinc-700 object-contain shadow-xl">
+          <button type="button" onclick="clearReviewScreenshot(event)" class="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center font-bold text-sm shadow-lg">✕</button>
+        </div>
       </div>
 
       <button type="submit" id="r-submit" class="w-full py-4 bg-brand-accent hover:bg-[#0ea371] text-black font-display font-black tracking-wider uppercase rounded-xl transition-all duration-300 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]">
-        Опублікувати скріншот відгуку
+        Опублікувати відгук
       </button>
     </form>
 
-    <!-- ВКЛАДКА 3: КЕРУВАННЯ ПОРЯДКОМ (DRAG-AND-DROP КАРТКИ) -->
+    <!-- ВКЛАДКА 3: КЕРУВАННЯ ПОРЯДКОМ ТА РЕДАГУВАННЯ -->
     <div id="order-section" class="glass-panel p-8 md:p-10 rounded-[28px] space-y-10 hidden">
       
-      <!-- Сортування робіт -->
+      <!-- Сортування та редагування робіт -->
       <div>
         <div class="flex justify-between items-center mb-4">
           <div>
-            <h3 class="font-display font-bold text-xl text-white">Порядок робіт (Проєкти)</h3>
-            <p class="text-xs text-zinc-400">Перетягуй картки мишкою, щоб змінити порядок відображення на сайті</p>
+            <h3 class="font-display font-bold text-xl text-white">Список робіт</h3>
+            <p class="text-xs text-zinc-400">Натисни на роботу для <b>редагування фотографій</b> або перетягуй картки для зміни порядку</p>
           </div>
           <span id="projects-save-status" class="text-xs font-mono text-brand-accent hidden">✓ Порядок збережено</span>
         </div>
@@ -230,12 +228,12 @@
 
       <hr class="border-zinc-800">
 
-      <!-- Сортування відгуків -->
+      <!-- Відгуки -->
       <div>
         <div class="flex justify-between items-center mb-4">
           <div>
-            <h3 class="font-display font-bold text-xl text-white">Порядок відгуків (Скріншоти)</h3>
-            <p class="text-xs text-zinc-400">Перетягуй скріншоти мишкою, щоб змінити їхнє розташування</p>
+            <h3 class="font-display font-bold text-xl text-white">Список відгуків</h3>
+            <p class="text-xs text-zinc-400">Перетягуй скріншоти мишкою, щоб змінити порядок</p>
           </div>
           <span id="reviews-save-status" class="text-xs font-mono text-brand-accent hidden">✓ Порядок збережено</span>
         </div>
@@ -246,12 +244,69 @@
 
     </div>
 
-    <!-- TOAST -->
+    <!-- TOAST СПОВІЩЕННЯ -->
     <div id="status-toast" class="fixed bottom-8 right-8 z-50 transform translate-y-32 transition-transform duration-300 p-4 rounded-xl glass-panel flex items-center gap-3 border shadow-2xl">
       <span id="toast-icon"></span>
       <span id="toast-msg" class="text-sm font-medium"></span>
     </div>
 
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 3. МОДАЛЬНЕ ВІКНО РЕДАГУВАННЯ ПРОЄКТУ (EDIT MODAL)                     -->
+  <!-- ===================================================================== -->
+  <div id="edit-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4 md:p-8 overflow-y-auto">
+    <div class="glass-panel p-6 md:p-8 rounded-[28px] max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-zinc-700/80 space-y-6">
+      
+      <div class="flex justify-between items-center border-b border-zinc-800 pb-4">
+        <div>
+          <span class="text-xs font-mono text-brand-accent uppercase">Project Editor</span>
+          <h2 class="font-display font-bold text-2xl text-white" id="edit-modal-title">Редагування проєкту</h2>
+        </div>
+        <button onclick="closeEditModal()" class="w-8 h-8 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white flex items-center justify-center transition">✕</button>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-mono uppercase tracking-wider text-zinc-400 mb-1">Назва</label>
+          <input type="text" id="edit-title" class="w-full bg-black/60 border border-zinc-800 rounded-xl p-3 text-white outline-none focus:border-brand-accent">
+        </div>
+        <div>
+          <label class="block text-xs font-mono uppercase tracking-wider text-zinc-400 mb-1">Опис</label>
+          <textarea id="edit-desc" rows="2" class="w-full bg-black/60 border border-zinc-800 rounded-xl p-3 text-white outline-none focus:border-brand-accent"></textarea>
+        </div>
+      </div>
+
+      <!-- ФОТОГРАФІЇ В ПРОЄКТІ -->
+      <div class="space-y-3">
+        <div class="flex justify-between items-center">
+          <div>
+            <h4 class="font-display font-bold text-white text-base">Галерея проєкту</h4>
+            <p class="text-xs text-zinc-400">Наведись на фото, щоб побачити <b>✕</b>. Перетягуй, щоб змінити порядок!</p>
+          </div>
+          <span id="edit-images-count" class="text-xs font-mono text-brand-accent">0 фото</span>
+        </div>
+
+        <!-- DROPZONE ДЛЯ ДОДАВАННЯ ЩЕ ФОТО В ЦЕЙ ПРОЄКТ -->
+        <div id="drop-edit-add" class="p-4 rounded-xl border-2 border-dashed border-zinc-800 hover:border-brand-accent bg-black/30 text-center cursor-pointer transition">
+          <input type="file" id="edit-add-files" accept="image/*" multiple class="hidden">
+          <span class="text-xs font-mono text-zinc-400">+ Перетягни сюди нові фото, щоб додати їх до цього проєкту</span>
+        </div>
+
+        <!-- СІТКА ЗОБРАЖЕНЬ ПРОЄКТУ (З ПЕРЕТЯГУВАННЯМ ТА ХРЕСТИКАМИ) -->
+        <div id="edit-images-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 pt-2"></div>
+      </div>
+
+      <div class="flex gap-3 pt-4 border-t border-zinc-800">
+        <button id="save-edit-btn" onclick="saveProjectChanges()" class="flex-1 py-3.5 bg-brand-accent hover:bg-[#0ea371] text-black font-display font-bold rounded-xl transition shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+          Зберегти зміни
+        </button>
+        <button onclick="closeEditModal()" class="px-6 py-3.5 border border-zinc-800 hover:bg-zinc-800 text-zinc-400 rounded-xl transition">
+          Скасувати
+        </button>
+      </div>
+
+    </div>
   </div>
 
   <script>
@@ -303,7 +358,6 @@
       await _supabase.auth.signOut();
     }
 
-    // Перемикання вкладок
     function switchTab(tab) {
       const pForm = document.getElementById('project-form');
       const rForm = document.getElementById('review-form');
@@ -316,111 +370,123 @@
       rForm.classList.add('hidden');
       oSection.classList.add('hidden');
 
-      const inactiveClass = "flex items-center gap-2 px-5 py-3 rounded-xl bg-zinc-900/80 text-zinc-400 hover:text-white border border-zinc-800 font-display font-bold text-sm tracking-wide";
-      const activeClass = "flex items-center gap-2 px-5 py-3 rounded-xl bg-brand-accent text-black font-display font-bold text-sm tracking-wide shadow-[0_0_20px_rgba(16,185,129,0.25)]";
+      const inactive = "flex items-center gap-2 px-5 py-3 rounded-xl bg-zinc-900/80 text-zinc-400 hover:text-white border border-zinc-800 font-display font-bold text-sm tracking-wide";
+      const active = "flex items-center gap-2 px-5 py-3 rounded-xl bg-brand-accent text-black font-display font-bold text-sm tracking-wide shadow-[0_0_20px_rgba(16,185,129,0.25)]";
 
-      tWork.className = inactiveClass;
-      tReview.className = inactiveClass;
-      tOrder.className = inactiveClass;
+      tWork.className = inactive;
+      tReview.className = inactive;
+      tOrder.className = inactive;
 
       if (tab === 'work') {
         pForm.classList.remove('hidden');
-        tWork.className = activeClass;
+        tWork.className = active;
       } else if (tab === 'review') {
         rForm.classList.remove('hidden');
-        tReview.className = activeClass;
+        tReview.className = active;
       } else if (tab === 'order') {
         oSection.classList.remove('hidden');
-        tOrder.className = activeClass;
+        tOrder.className = active;
         loadOrderItems();
       }
     }
 
-    // DRAG AND DROP ДЛЯ ЗАВАНТАЖЕННЯ ФАЙЛІВ
-    let selectedThumb = null;
-    let selectedGallery = [];
-    let selectedReviewImg = null;
+    /* ==========================================================================
+       1. СТВОРЕННЯ НОВОГО ПРОЄКТУ: НАКОПИЧЕННЯ ФОТО, ХРЕСТИКИ, СОРТУВАННЯ
+       ========================================================================== */
+    // Масив об'єктів: [{ id, file, url }]
+    let newProjectPhotos = [];
 
-    function setupDragAndDrop(dropZoneId, inputId, onFilesSelected) {
-      const dropZone = document.getElementById(dropZoneId);
+    function setupDragAndDrop(dropZoneId, inputId, onFiles) {
+      const zone = document.getElementById(dropZoneId);
       const input = document.getElementById(inputId);
 
-      dropZone.addEventListener('click', () => input.click());
+      zone.addEventListener('click', () => input.click());
 
       input.addEventListener('change', (e) => {
         if (e.target.files && e.target.files.length > 0) {
-          onFilesSelected(Array.from(e.target.files));
+          onFiles(Array.from(e.target.files));
+          input.value = ''; // скидаємо, щоб можна було вибрати той самий файл повторно
         }
       });
 
       ['dragenter', 'dragover'].forEach(name => {
-        dropZone.addEventListener(name, (e) => {
+        zone.addEventListener(name, (e) => {
           e.preventDefault(); e.stopPropagation();
-          dropZone.classList.add('drop-active');
+          zone.classList.add('drop-active');
         });
       });
 
       ['dragleave', 'drop'].forEach(name => {
-        dropZone.addEventListener(name, (e) => {
+        zone.addEventListener(name, (e) => {
           e.preventDefault(); e.stopPropagation();
-          dropZone.classList.remove('drop-active');
+          zone.classList.remove('drop-active');
         });
       });
 
-      dropZone.addEventListener('drop', (e) => {
+      zone.addEventListener('drop', (e) => {
         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-          onFilesSelected(Array.from(e.dataTransfer.files));
+          onFiles(Array.from(e.dataTransfer.files));
         }
       });
     }
 
-    setupDragAndDrop('drop-thumb', 'p-thumb', (files) => {
-      selectedThumb = files[0];
-      const preview = document.getElementById('thumb-preview');
-      preview.src = URL.createObjectURL(selectedThumb);
-      preview.classList.remove('hidden');
-      document.getElementById('thumb-preview-box').classList.add('hidden');
-    });
-
+    // Додавання нових фото в проєкт (НАКОПИЧУЄМО)
     setupDragAndDrop('drop-gallery', 'p-gallery', (files) => {
-      selectedGallery = files;
-      const container = document.getElementById('gallery-previews');
-      container.innerHTML = '';
-      files.forEach(f => {
-        const img = document.createElement('img');
-        img.src = URL.createObjectURL(f);
-        img.className = 'w-full h-16 object-cover rounded-lg border border-zinc-700';
-        container.appendChild(img);
+      const items = files.map(file => ({
+        id: 'new_' + Math.random().toString(36).substr(2, 9),
+        file: file,
+        url: URL.createObjectURL(file)
+      }));
+      newProjectPhotos = [...newProjectPhotos, ...items];
+      renderNewProjectPhotos();
+    });
+
+    function renderNewProjectPhotos() {
+      const list = document.getElementById('new-gallery-list');
+      const counter = document.getElementById('new-images-count');
+      list.innerHTML = '';
+      counter.innerText = `${newProjectPhotos.length} фото додано`;
+
+      newProjectPhotos.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'relative group rounded-xl overflow-hidden border border-zinc-700 bg-black aspect-video cursor-grab active:cursor-grabbing select-none transition';
+        card.draggable = true;
+        card.dataset.index = index;
+
+        card.innerHTML = `
+          <img src="${item.url}" class="w-full h-full object-cover pointer-events-none">
+          ${index === 0 ? '<span class="absolute bottom-1.5 left-1.5 bg-brand-accent text-black font-mono text-[9px] font-bold px-1.5 py-0.5 rounded shadow pointer-events-none">★ ОБКЛАДИНКА</span>' : ''}
+          <button type="button" onclick="removeNewPhoto(${index})" class="absolute top-1.5 right-1.5 bg-red-600/90 hover:bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold text-xs opacity-0 group-hover:opacity-100 transition shadow-lg" title="Видалити це фото">✕</button>
+        `;
+
+        // Drag-and-Drop всередині сітки фото
+        card.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('text/plain', index);
+          card.classList.add('dragging');
+        });
+        card.addEventListener('dragend', () => card.classList.remove('dragging'));
+        card.addEventListener('dragover', (e) => e.preventDefault());
+        card.addEventListener('drop', (e) => {
+          e.preventDefault();
+          const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
+          const toIdx = index;
+          if (fromIdx !== toIdx) {
+            const moved = newProjectPhotos.splice(fromIdx, 1)[0];
+            newProjectPhotos.splice(toIdx, 0, moved);
+            renderNewProjectPhotos();
+          }
+        });
+
+        list.appendChild(card);
       });
-      container.classList.remove('hidden');
-      document.getElementById('gallery-preview-box').classList.add('hidden');
-    });
-
-    setupDragAndDrop('drop-review', 'r-image', (files) => {
-      selectedReviewImg = files[0];
-      const preview = document.getElementById('review-preview');
-      preview.src = URL.createObjectURL(selectedReviewImg);
-      preview.classList.remove('hidden');
-      document.getElementById('review-preview-box').classList.add('hidden');
-    });
-
-    function showToast(text, isError = false) {
-      const toast = document.getElementById('status-toast');
-      const msg = document.getElementById('toast-msg');
-      const icon = document.getElementById('toast-icon');
-
-      msg.innerText = text;
-      if (isError) {
-        toast.className = "fixed bottom-8 right-8 z-50 p-4 rounded-xl glass-panel flex items-center gap-3 border border-red-500/50 bg-red-950/80 text-red-200 shadow-2xl";
-        icon.innerHTML = '⚠️';
-      } else {
-        toast.className = "fixed bottom-8 right-8 z-50 p-4 rounded-xl glass-panel flex items-center gap-3 border border-emerald-500/50 bg-emerald-950/80 text-emerald-200 shadow-2xl";
-        icon.innerHTML = '✨';
-      }
-      toast.classList.remove('translate-y-32');
-      setTimeout(() => toast.classList.add('translate-y-32'), 4000);
     }
 
+    function removeNewPhoto(index) {
+      newProjectPhotos.splice(index, 1);
+      renderNewProjectPhotos();
+    }
+
+    // Завантаження фото в Supabase Storage
     async function uploadImage(file) {
       const ext = file.name.split('.').pop();
       const fileName = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${ext}`;
@@ -430,55 +496,71 @@
       return data.publicUrl;
     }
 
-    // ВІДПРАВКА ПРОЄКТУ
+    // Відправка форми нового проєкту
     document.getElementById('project-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!selectedThumb) {
-        showToast('Додай головне фото!', true);
+      if (newProjectPhotos.length === 0) {
+        showToast('Додай хоча б одне фото!', true);
         return;
       }
 
       const btn = document.getElementById('p-submit');
-      btn.innerText = 'Завантаження...';
+      btn.innerText = 'Завантаження медіа...';
       btn.disabled = true;
 
       try {
-        const thumbUrl = await uploadImage(selectedThumb);
-        const galleryUrls = [thumbUrl];
-
-        for (let f of selectedGallery) {
-          const url = await uploadImage(f);
-          galleryUrls.push(url);
+        const uploadedUrls = [];
+        for (let item of newProjectPhotos) {
+          const url = await uploadImage(item.file);
+          uploadedUrls.push(url);
         }
+
+        const thumbUrl = uploadedUrls[0]; // перше фото стає обкладинкою
 
         const { error } = await _supabase.from('projects').insert([{
           title: document.getElementById('p-title').value,
           description: document.getElementById('p-desc').value,
           thumb: thumbUrl,
-          gallery: galleryUrls,
+          gallery: uploadedUrls,
           sort_order: 0
         }]);
 
         if (error) throw error;
 
-        showToast('Роботу опубліковано!');
+        showToast('Проєкт успішно створено!');
         document.getElementById('project-form').reset();
-        selectedThumb = null;
-        selectedGallery = [];
-        document.getElementById('thumb-preview').classList.add('hidden');
-        document.getElementById('thumb-preview-box').classList.remove('hidden');
-        document.getElementById('gallery-previews').classList.add('hidden');
-        document.getElementById('gallery-preview-box').classList.remove('hidden');
+        newProjectPhotos = [];
+        renderNewProjectPhotos();
 
       } catch (err) {
         showToast('Помилка: ' + err.message, true);
       } finally {
-        btn.innerText = 'Опублікувати роботу';
+        btn.innerText = 'Опублікувати проєкт';
         btn.disabled = false;
       }
     });
 
-    // ВІДПРАВКА СКРІНШОТА
+    /* ==========================================================================
+       2. ФОРМА ВІДГУКУ (СКРІНШОТ З ХРЕСТИКОМ)
+       ========================================================================== */
+    let selectedReviewImg = null;
+
+    setupDragAndDrop('drop-review', 'r-image', (files) => {
+      selectedReviewImg = files[0];
+      const preview = document.getElementById('review-preview');
+      preview.src = URL.createObjectURL(selectedReviewImg);
+      document.getElementById('review-preview-wrapper').classList.remove('hidden');
+      document.getElementById('review-preview-box').classList.add('hidden');
+    });
+
+    function clearReviewScreenshot(e) {
+      e.stopPropagation();
+      selectedReviewImg = null;
+      document.getElementById('review-preview-wrapper').classList.add('hidden');
+      document.getElementById('review-preview-box').classList.remove('hidden');
+      document.getElementById('r-image').value = '';
+    }
+
     document.getElementById('review-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!selectedReviewImg) {
@@ -501,51 +583,60 @@
 
         if (error) throw error;
 
-        showToast('Скріншот опубліковано!');
+        showToast('Відгук опубліковано!');
         document.getElementById('review-form').reset();
-        selectedReviewImg = null;
-        document.getElementById('review-preview').classList.add('hidden');
-        document.getElementById('review-preview-box').classList.remove('hidden');
+        clearReviewScreenshot(e);
 
       } catch (err) {
         showToast('Помилка: ' + err.message, true);
       } finally {
-        btn.innerText = 'Опублікувати скріншот відгуку';
+        btn.innerText = 'Опублікувати відгук';
         btn.disabled = false;
       }
     });
 
     /* ==========================================================================
-       ЛОГІКА СОРТУВАННЯ ТА ВИДАЛЕННЯ КАРТОК (DRAG AND DROP КАРТОК)
+       3. КЕРУВАННЯ ПОРЯДКОМ ТА РЕДАГУВАННЯ ІСНУЮЧОГО ПРОЄКТУ (EDIT MODAL)
        ========================================================================== */
+    let allProjectsList = [];
+    let currentEditProject = null; 
+    // currentEditProject.images = [{ id, url, file: null | File }]
+
     async function loadOrderItems() {
       const pList = document.getElementById('projects-order-list');
       const rList = document.getElementById('reviews-order-list');
 
-      // 1. Завантажуємо роботи
       const { data: projects } = await _supabase
         .from('projects')
         .select('*')
         .order('sort_order', { ascending: true })
         .order('created_at', { ascending: false });
 
+      allProjectsList = projects || [];
       pList.innerHTML = '';
-      if (!projects || projects.length === 0) {
+
+      if (allProjectsList.length === 0) {
         pList.innerHTML = '<div class="col-span-full py-4 text-center text-zinc-500">Немає робіт</div>';
       } else {
-        projects.forEach(p => {
+        allProjectsList.forEach(p => {
           const card = document.createElement('div');
-          card.className = 'draggable-card glass-panel p-3 rounded-2xl border border-zinc-800 flex flex-col justify-between cursor-grab active:cursor-grabbing select-none transition';
+          card.className = 'draggable-card glass-panel p-3 rounded-2xl border border-zinc-800 flex flex-col justify-between cursor-grab active:cursor-grabbing select-none transition group hover:border-brand-accent/60';
           card.draggable = true;
           card.dataset.id = p.id;
           card.innerHTML = `
-            <div class="relative w-full h-32 rounded-xl overflow-hidden mb-2 bg-black">
-              <img src="${p.thumb}" class="w-full h-full object-cover pointer-events-none">
-              <div class="absolute top-2 left-2 bg-black/70 px-2 py-0.5 rounded text-[10px] font-mono text-brand-accent">::: Тягни</div>
+            <div class="relative w-full h-36 rounded-xl overflow-hidden mb-2 bg-black cursor-pointer" onclick="openEditModal(${p.id})">
+              <img src="${p.thumb}" class="w-full h-full object-cover pointer-events-none group-hover:scale-105 transition duration-500">
+              <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                <span class="bg-brand-accent text-black font-display font-bold text-xs px-3 py-1.5 rounded-lg shadow-lg">✏️ Редагувати фото</span>
+              </div>
+              <div class="absolute top-2 left-2 bg-black/70 px-2 py-0.5 rounded text-[10px] font-mono text-brand-accent">::: Порядок</div>
             </div>
             <div class="flex justify-between items-center pt-1">
-              <span class="font-bold text-sm text-white truncate max-w-[150px]">${p.title}</span>
-              <button onclick="deleteItem('projects', ${p.id})" class="text-xs text-red-400 hover:text-red-300 p-1.5 hover:bg-red-500/10 rounded-lg transition" title="Видалити">🗑️</button>
+              <span class="font-bold text-sm text-white truncate max-w-[150px]" title="${p.title}">${p.title}</span>
+              <div class="flex gap-1">
+                <button onclick="openEditModal(${p.id})" class="text-xs text-zinc-400 hover:text-brand-accent p-1.5 hover:bg-zinc-800 rounded-lg transition" title="Редагувати">✏️</button>
+                <button onclick="deleteItem('projects', ${p.id})" class="text-xs text-red-400 hover:text-red-300 p-1.5 hover:bg-red-500/10 rounded-lg transition" title="Видалити">🗑️</button>
+              </div>
             </div>
           `;
           pList.appendChild(card);
@@ -553,7 +644,7 @@
         setupListReordering(pList, 'projects');
       }
 
-      // 2. Завантажуємо відгуки
+      // Відгуки
       const { data: reviews } = await _supabase
         .from('reviews')
         .select('*')
@@ -585,12 +676,159 @@
       }
     }
 
-    // Функція сортування мишкою між собою
+    // ВІДКРИТТЯ МОДАЛКИ РЕДАГУВАННЯ
+    function openEditModal(projectId) {
+      const proj = allProjectsList.find(p => p.id === projectId);
+      if (!proj) return;
+
+      const galleryList = Array.isArray(proj.gallery) ? proj.gallery : [proj.thumb];
+
+      currentEditProject = {
+        id: proj.id,
+        title: proj.title,
+        description: proj.description || '',
+        images: galleryList.map((url, i) => ({
+          id: 'exist_' + i + '_' + Math.random().toString(36).substr(2, 6),
+          url: url,
+          file: null
+        }))
+      };
+
+      document.getElementById('edit-title').value = currentEditProject.title;
+      document.getElementById('edit-desc').value = currentEditProject.description;
+      renderEditImagesGrid();
+
+      document.getElementById('edit-modal').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-modal').classList.add('hidden');
+      currentEditProject = null;
+    }
+
+    // ДОДАВАННЯ НОВИХ ФОТО ДО ПРОЄКТУ, ЩО РЕДАГУЄТЬСЯ
+    setupDragAndDrop('drop-edit-add', 'edit-add-files', (files) => {
+      if (!currentEditProject) return;
+      const newItems = files.map(file => ({
+        id: 'new_edit_' + Math.random().toString(36).substr(2, 9),
+        file: file,
+        url: URL.createObjectURL(file)
+      }));
+      currentEditProject.images = [...currentEditProject.images, ...newItems];
+      renderEditImagesGrid();
+    });
+
+    function renderEditImagesGrid() {
+      const grid = document.getElementById('edit-images-grid');
+      const counter = document.getElementById('edit-images-count');
+      grid.innerHTML = '';
+
+      if (!currentEditProject) return;
+      counter.innerText = `${currentEditProject.images.length} фото`;
+
+      currentEditProject.images.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'relative group rounded-xl overflow-hidden border border-zinc-700 bg-black aspect-video cursor-grab active:cursor-grabbing select-none transition';
+        card.draggable = true;
+        card.dataset.index = index;
+
+        card.innerHTML = `
+          <img src="${item.url}" class="w-full h-full object-cover pointer-events-none">
+          ${index === 0 ? '<span class="absolute bottom-1.5 left-1.5 bg-brand-accent text-black font-mono text-[9px] font-bold px-1.5 py-0.5 rounded shadow pointer-events-none">★ ОБКЛАДИНКА</span>' : ''}
+          <button type="button" onclick="removeEditImage(${index})" class="absolute top-1.5 right-1.5 bg-red-600/90 hover:bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold text-xs opacity-0 group-hover:opacity-100 transition shadow-lg" title="Видалити це фото">✕</button>
+        `;
+
+        // Перетягування фото всередині проєкту
+        card.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('text/plain', index);
+          card.classList.add('dragging');
+        });
+        card.addEventListener('dragend', () => card.classList.remove('dragging'));
+        card.addEventListener('dragover', (e) => e.preventDefault());
+        card.addEventListener('drop', (e) => {
+          e.preventDefault();
+          const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
+          const toIdx = index;
+          if (fromIdx !== toIdx) {
+            const moved = currentEditProject.images.splice(fromIdx, 1)[0];
+            currentEditProject.images.splice(toIdx, 0, moved);
+            renderEditImagesGrid();
+          }
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    function removeEditImage(index) {
+      if (currentEditProject.images.length <= 1) {
+        alert('У проєкті має залишитися хоча б одне фото!');
+        return;
+      }
+      currentEditProject.images.splice(index, 1);
+      renderEditImagesGrid();
+    }
+
+    // ЗБЕРЕЖЕННЯ ЗМІН ПРОЄКТУ
+    async function saveProjectChanges() {
+      if (!currentEditProject) return;
+      if (currentEditProject.images.length === 0) {
+        showToast('Проєкт не може бути без фото!', true);
+        return;
+      }
+
+      const btn = document.getElementById('save-edit-btn');
+      btn.innerText = 'Збереження змін...';
+      btn.disabled = true;
+
+      try {
+        const finalUrls = [];
+
+        for (let item of currentEditProject.images) {
+          if (item.file) {
+            // Нове фото — завантажуємо
+            const url = await uploadImage(item.file);
+            finalUrls.push(url);
+          } else {
+            // Вже існуюче фото
+            finalUrls.push(item.url);
+          }
+        }
+
+        const newThumb = finalUrls[0]; // Перше фото стає обкладинкою
+        const newTitle = document.getElementById('edit-title').value.trim();
+        const newDesc = document.getElementById('edit-desc').value.trim();
+
+        const { error } = await _supabase
+          .from('projects')
+          .update({
+            title: newTitle,
+            description: newDesc,
+            thumb: newThumb,
+            gallery: finalUrls
+          })
+          .eq('id', currentEditProject.id);
+
+        if (error) throw error;
+
+        showToast('Проєкт успішно оновлено!');
+        closeEditModal();
+        loadOrderItems();
+
+      } catch (err) {
+        showToast('Помилка оновлення: ' + err.message, true);
+      } finally {
+        btn.innerText = 'Зберегти зміни';
+        btn.disabled = false;
+      }
+    }
+
+    // СОРТУВАННЯ КАРТОК ПРОЄКТІВ ТА ВІДГУКІВ
     function setupListReordering(container, table) {
       let draggedCard = null;
 
       container.querySelectorAll('.draggable-card').forEach(card => {
-        card.addEventListener('dragstart', (e) => {
+        card.addEventListener('dragstart', () => {
           draggedCard = card;
           setTimeout(() => card.classList.add('dragging'), 0);
         });
@@ -598,7 +836,6 @@
         card.addEventListener('dragend', async () => {
           card.classList.remove('dragging');
           draggedCard = null;
-          // Зберігаємо новий порядок у Supabase
           await saveNewOrder(container, table);
         });
       });
@@ -629,7 +866,6 @@
       }, { offset: Number.NEGATIVE_INFINITY }).element;
     }
 
-    // Запис оновленого порядку в базу
     async function saveNewOrder(container, table) {
       const cards = [...container.querySelectorAll('.draggable-card')];
       const statusEl = document.getElementById(`${table}-save-status`);
@@ -649,16 +885,32 @@
       }
     }
 
-    // Видалення картки
     async function deleteItem(table, id) {
-      if (!confirm('Видалити цю роботу/відгук назавжди?')) return;
+      if (!confirm('Видалити назавжди?')) return;
       const { error } = await _supabase.from(table).delete().eq('id', id);
       if (error) {
-        showToast('Помилка видалення: ' + error.message, true);
+        showToast('Помилка: ' + error.message, true);
       } else {
         showToast('Успішно видалено!');
         loadOrderItems();
       }
+    }
+
+    function showToast(text, isError = false) {
+      const toast = document.getElementById('status-toast');
+      const msg = document.getElementById('toast-msg');
+      const icon = document.getElementById('toast-icon');
+
+      msg.innerText = text;
+      if (isError) {
+        toast.className = "fixed bottom-8 right-8 z-50 p-4 rounded-xl glass-panel flex items-center gap-3 border border-red-500/50 bg-red-950/80 text-red-200 shadow-2xl";
+        icon.innerHTML = '⚠️';
+      } else {
+        toast.className = "fixed bottom-8 right-8 z-50 p-4 rounded-xl glass-panel flex items-center gap-3 border border-emerald-500/50 bg-emerald-950/80 text-emerald-200 shadow-2xl";
+        icon.innerHTML = '✨';
+      }
+      toast.classList.remove('translate-y-32');
+      setTimeout(() => toast.classList.add('translate-y-32'), 4000);
     }
   </script>
 </body>
