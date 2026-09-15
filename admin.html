@@ -7,7 +7,7 @@
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Оптимізована бібліотека для швидкого і плавного Drag-and-Drop без зависань -->
+  <!-- Бібліотека для супер-плавного Drag-and-Drop -->
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
   
   <style>
@@ -36,14 +36,31 @@
       transform: scale(1.01);
     }
 
-    .dragging {
-      opacity: 0.35 !important;
+    /* === СТИЛІ ДЛЯ ПЛАВНОГО ТА ЗРОЗУМІЛОГО ПЕРЕТЯГУВАННЯ === */
+    
+    /* Слот, куди впаде елемент (місце висадки) */
+    .sort-ghost {
+      opacity: 0.3 !important;
+      background: rgba(16, 185, 129, 0.08) !important;
+      border: 2px dashed #10b981 !important;
+      border-radius: 1rem !important;
       transform: scale(0.96) !important;
-      border-color: #10b981 !important;
     }
 
-    .sortable-chosen {
+    /* Елемент під час захоплення курсором */
+    .sort-chosen {
       cursor: grabbing !important;
+    }
+
+    /* Елемент, який летить за курсором */
+    .sort-drag, .sortable-fallback {
+      opacity: 0.95 !important;
+      transform: scale(1.04) rotate(1.5deg) !important;
+      box-shadow: 0 25px 35px -10px rgba(0, 0, 0, 0.8), 0 0 25px rgba(16, 185, 129, 0.35) !important;
+      border-color: #10b981 !important;
+      z-index: 99999 !important;
+      cursor: grabbing !important;
+      pointer-events: none !important;
     }
   </style>
 
@@ -164,7 +181,7 @@
         <div class="flex justify-between items-center">
           <div>
             <h4 class="font-display font-bold text-white text-base">Фотографії проєкту</h4>
-            <p class="text-xs text-zinc-500">Перше фото стане обкладинкою. Перетягуй їх між собою або видаляй через ✕</p>
+            <p class="text-xs text-zinc-500">Перше фото — завжди обкладинка. Перетягуй їх для зміни порядку або видаляй через ✕</p>
           </div>
           <span id="new-images-count" class="text-xs font-mono text-brand-accent">0 фото додано</span>
         </div>
@@ -174,10 +191,10 @@
           <input type="file" id="p-gallery" accept="image/*" multiple class="hidden">
           <svg width="36" height="36" class="text-zinc-500 mx-auto mb-2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
           <div class="font-display font-bold text-sm text-white pointer-events-none">Перетягни фото сюди або клікни</div>
-          <p class="text-xs text-zinc-500 font-mono mt-1 pointer-events-none">Можна додавати партіями — вони не зникатимуть</p>
+          <p class="text-xs text-zinc-500 font-mono mt-1 pointer-events-none">Можна додавати партіями — вони накопичуються</p>
         </div>
 
-        <!-- СІТКА МІНІАТЮР З ХРЕСТИКАМИ ТА ПЕРЕТЯГУВАННЯМ -->
+        <!-- СІТКА МІНІАТЮР З ПЛАВНИМ СОРТУВАННЯМ -->
         <div id="new-gallery-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 pt-2 min-h-[50px]"></div>
       </div>
 
@@ -223,7 +240,7 @@
         <div class="flex justify-between items-center mb-4">
           <div>
             <h3 class="font-display font-bold text-xl text-white">Список робіт</h3>
-            <p class="text-xs text-zinc-400">Натисни на роботу для <b>редагування фотографій</b> або перетягуй картки для зміни порядку</p>
+            <p class="text-xs text-zinc-400">Хапай та перетягуй картки для зміни порядку. Натискай «Редагувати», щоб змінити фотографії</p>
           </div>
           <span id="projects-save-status" class="text-xs font-mono text-brand-accent hidden">✓ Порядок збережено</span>
         </div>
@@ -239,7 +256,7 @@
         <div class="flex justify-between items-center mb-4">
           <div>
             <h3 class="font-display font-bold text-xl text-white">Список відгуків</h3>
-            <p class="text-xs text-zinc-400">Перетягуй скріншоти мишкою, щоб змінити порядок</p>
+            <p class="text-xs text-zinc-400">Перетягуй скріншоти мишкою, щоб змінити черговість показу на сайті</p>
           </div>
           <span id="reviews-save-status" class="text-xs font-mono text-brand-accent hidden">✓ Порядок збережено</span>
         </div>
@@ -286,7 +303,7 @@
         <div class="flex justify-between items-center">
           <div>
             <h4 class="font-display font-bold text-white text-base">Галерея проєкту</h4>
-            <p class="text-xs text-zinc-400">Наведись на фото, щоб побачити <b>✕</b>. Перетягуй, щоб змінити порядок!</p>
+            <p class="text-xs text-zinc-400">Перетягуй фото для зміни порядку (перше — обкладинка). Натискай <b>✕</b> для видалення</p>
           </div>
           <span id="edit-images-count" class="text-xs font-mono text-brand-accent">0 фото</span>
         </div>
@@ -297,7 +314,7 @@
           <span class="text-xs font-mono text-zinc-400 pointer-events-none">+ Перетягни сюди нові фото, щоб додати їх до цього проєкту</span>
         </div>
 
-        <!-- СІТКА ЗОБРАЖЕНЬ ПРОЄКТУ -->
+        <!-- СІТКА ЗОБРАЖЕНЬ ПРОЄКТУ З ПЛАВНИМ СОРТУВАННЯМ -->
         <div id="edit-images-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 pt-2 min-h-[50px]"></div>
       </div>
 
@@ -395,7 +412,7 @@
     }
 
     /* ==========================================================================
-       1. СТВОРЕННЯ НОВОГО ПРОЄКТУ: ОПТИМІЗОВАНЕ ПЕРЕТЯГУВАННЯ
+       1. СТВОРЕННЯ НОВОГО ПРОЄКТУ (ПЛАВНЕ ПЕРЕТЯГУВАННЯ ФОТО)
        ========================================================================== */
     let newProjectPhotos = [];
 
@@ -445,7 +462,6 @@
       });
     }
 
-    // Додавання нових фото в проєкт
     setupDragAndDrop('drop-gallery', 'p-gallery', (files) => {
       const items = files.map(file => ({
         id: 'new_' + Math.random().toString(36).substr(2, 9),
@@ -456,6 +472,7 @@
       renderNewProjectPhotos();
     });
 
+    // Оновлення бейджа обкладинки для першого фото
     function updateCoverBadges(container) {
       const cards = container.children;
       for (let i = 0; i < cards.length; i++) {
@@ -486,11 +503,17 @@
         list.appendChild(card);
       });
 
-      // Ініціалізація плавного перетягування без лагів
+      // Плавний Sortable для фото
       if (list._sortable) list._sortable.destroy();
       list._sortable = new Sortable(list, {
-        animation: 150,
-        ghostClass: 'dragging',
+        animation: 200,
+        easing: "cubic-bezier(0.2, 1, 0.1, 1)",
+        forceFallback: true,
+        fallbackTolerance: 3,
+        ghostClass: 'sort-ghost',
+        chosenClass: 'sort-chosen',
+        dragClass: 'sort-drag',
+        filter: 'button',
         onEnd: (evt) => {
           const moved = newProjectPhotos.splice(evt.oldIndex, 1)[0];
           newProjectPhotos.splice(evt.newIndex, 0, moved);
@@ -503,7 +526,7 @@
       const idx = newProjectPhotos.findIndex(p => p.id === id);
       if (idx !== -1) {
         if (newProjectPhotos[idx].url.startsWith('blob:')) {
-          URL.revokeObjectURL(newProjectPhotos[idx].url); // Очищення пам'яті
+          URL.revokeObjectURL(newProjectPhotos[idx].url);
         }
         newProjectPhotos.splice(idx, 1);
         renderNewProjectPhotos();
@@ -626,10 +649,11 @@
     });
 
     /* ==========================================================================
-       3. КЕРУВАННЯ ПОРЯДКОМ ТА РЕДАГУВАННЯ ІСНУЮЧОГО ПРОЄКТУ
+       3. КЕРУВАННЯ ПОРЯДКОМ ТА РЕДАГУВАННЯ КАРТОК
        ========================================================================== */
     let allProjectsList = [];
-    let currentEditProject = null; 
+    let currentEditProject = null;
+    let isDraggingActive = false; // Прапорець, щоб при перетягуванні не відкривалася модалка!
 
     async function loadOrderItems() {
       const pList = document.getElementById('projects-order-list');
@@ -649,32 +673,52 @@
       } else {
         allProjectsList.forEach(p => {
           const card = document.createElement('div');
-          card.className = 'draggable-card glass-panel p-3 rounded-2xl border border-zinc-800 flex flex-col justify-between cursor-grab active:cursor-grabbing select-none transition group hover:border-brand-accent/60';
+          card.className = 'draggable-card glass-panel p-3.5 rounded-2xl border border-zinc-800 flex flex-col justify-between cursor-grab active:cursor-grabbing select-none transition group hover:border-brand-accent/60';
           card.dataset.id = p.id;
           card.innerHTML = `
-            <div class="relative w-full h-36 rounded-xl overflow-hidden mb-2 bg-black cursor-pointer" onclick="openEditModal(${p.id})">
+            <div class="relative w-full h-36 rounded-xl overflow-hidden mb-2.5 bg-black">
               <img src="${p.thumb}" class="w-full h-full object-cover pointer-events-none group-hover:scale-105 transition duration-500">
               <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center pointer-events-none">
-                <span class="bg-brand-accent text-black font-display font-bold text-xs px-3 py-1.5 rounded-lg shadow-lg">✏️ Редагувати фото</span>
+                <span class="bg-brand-accent text-black font-display font-bold text-xs px-3 py-1.5 rounded-lg shadow-lg">✏️ Редагувати</span>
               </div>
-              <div class="absolute top-2 left-2 bg-black/70 px-2 py-0.5 rounded text-[10px] font-mono text-brand-accent pointer-events-none">::: Порядок</div>
+              <div class="absolute top-2 left-2 bg-black/80 px-2 py-0.5 rounded-md text-[10px] font-mono text-brand-accent border border-white/10 pointer-events-none">::: Порядок</div>
             </div>
             <div class="flex justify-between items-center pt-1">
-              <span class="font-bold text-sm text-white truncate max-w-[150px]" title="${p.title}">${p.title}</span>
+              <span class="font-bold text-sm text-white truncate max-w-[150px] pointer-events-none" title="${p.title}">${p.title}</span>
               <div class="flex gap-1">
-                <button onclick="openEditModal(${p.id})" class="text-xs text-zinc-400 hover:text-brand-accent p-1.5 hover:bg-zinc-800 rounded-lg transition" title="Редагувати">✏️</button>
-                <button onclick="deleteItem('projects', ${p.id})" class="text-xs text-red-400 hover:text-red-300 p-1.5 hover:bg-red-500/10 rounded-lg transition" title="Видалити">🗑️</button>
+                <button type="button" onclick="safeOpenEditModal(${p.id})" class="text-xs text-zinc-400 hover:text-brand-accent p-1.5 hover:bg-zinc-800 rounded-lg transition" title="Редагувати">✏️</button>
+                <button type="button" onclick="deleteItem('projects', ${p.id})" class="text-xs text-red-400 hover:text-red-300 p-1.5 hover:bg-red-500/10 rounded-lg transition" title="Видалити">🗑️</button>
               </div>
             </div>
           `;
+          
+          // Клік по картці відкриває модалку тільки якщо ми її НЕ перетягували
+          card.addEventListener('click', (e) => {
+            if (e.target.closest('button')) return;
+            safeOpenEditModal(p.id);
+          });
+
           pList.appendChild(card);
         });
 
+        // Плавний Sortable для карток проєктів
         if (pList._sortable) pList._sortable.destroy();
         pList._sortable = new Sortable(pList, {
-          animation: 150,
-          ghostClass: 'dragging',
-          onEnd: () => saveNewOrder(pList, 'projects')
+          animation: 200,
+          easing: "cubic-bezier(0.2, 1, 0.1, 1)",
+          forceFallback: true,
+          fallbackTolerance: 4,
+          ghostClass: 'sort-ghost',
+          chosenClass: 'sort-chosen',
+          dragClass: 'sort-drag',
+          filter: 'button',
+          onStart: () => {
+            isDraggingActive = true;
+          },
+          onEnd: async () => {
+            setTimeout(() => { isDraggingActive = false; }, 100);
+            await saveNewOrder(pList, 'projects');
+          }
         });
       }
 
@@ -691,28 +735,43 @@
       } else {
         reviews.forEach(r => {
           const card = document.createElement('div');
-          card.className = 'draggable-card glass-panel p-2.5 rounded-xl border border-zinc-800 flex flex-col justify-between cursor-grab active:cursor-grabbing select-none transition';
+          card.className = 'draggable-card glass-panel p-2.5 rounded-xl border border-zinc-800 flex flex-col justify-between cursor-grab active:cursor-grabbing select-none transition group hover:border-brand-accent/50';
           card.dataset.id = r.id;
           card.innerHTML = `
             <div class="relative w-full h-24 rounded-lg overflow-hidden mb-2 bg-black">
               <img src="${r.image}" class="w-full h-full object-cover object-top pointer-events-none">
-              <div class="absolute top-1 left-1 bg-black/70 px-1.5 py-0.5 rounded text-[9px] font-mono text-brand-accent pointer-events-none">::: Тягни</div>
+              <div class="absolute top-1 left-1 bg-black/80 px-1.5 py-0.5 rounded text-[9px] font-mono text-brand-accent pointer-events-none">::: Тягни</div>
             </div>
             <div class="flex justify-between items-center">
-              <span class="text-xs text-zinc-300 truncate max-w-[100px]">${r.author || 'Proof'}</span>
-              <button onclick="deleteItem('reviews', ${r.id})" class="text-xs text-red-400 hover:text-red-300 p-1 hover:bg-red-500/10 rounded-lg transition">🗑️</button>
+              <span class="text-xs text-zinc-300 truncate max-w-[100px] pointer-events-none">${r.author || 'Proof'}</span>
+              <button type="button" onclick="deleteItem('reviews', ${r.id})" class="text-xs text-red-400 hover:text-red-300 p-1 hover:bg-red-500/10 rounded-lg transition">🗑️</button>
             </div>
           `;
           rList.appendChild(card);
         });
 
+        // Плавний Sortable для відгуків
         if (rList._sortable) rList._sortable.destroy();
         rList._sortable = new Sortable(rList, {
-          animation: 150,
-          ghostClass: 'dragging',
-          onEnd: () => saveNewOrder(rList, 'reviews')
+          animation: 200,
+          easing: "cubic-bezier(0.2, 1, 0.1, 1)",
+          forceFallback: true,
+          fallbackTolerance: 4,
+          ghostClass: 'sort-ghost',
+          chosenClass: 'sort-chosen',
+          dragClass: 'sort-drag',
+          filter: 'button',
+          onEnd: async () => {
+            await saveNewOrder(rList, 'reviews');
+          }
         });
       }
+    }
+
+    // Безпечне відкриття редагування без помилкового спрацювання після перетягування
+    function safeOpenEditModal(projectId) {
+      if (isDraggingActive) return;
+      openEditModal(projectId);
     }
 
     function openEditModal(projectId) {
@@ -749,7 +808,7 @@
       currentEditProject = null;
     }
 
-    // ДОДАВАННЯ НОВИХ ФОТО ДО ПРОЄКТУ, ЩО РЕДАГУЄТЬСЯ
+    // Додавання нових фото під час редагування
     setupDragAndDrop('drop-edit-add', 'edit-add-files', (files) => {
       if (!currentEditProject) return;
       const newItems = files.map(file => ({
@@ -782,10 +841,17 @@
         grid.appendChild(card);
       });
 
+      // Плавний Sortable для фото в модалці редагування
       if (grid._sortable) grid._sortable.destroy();
       grid._sortable = new Sortable(grid, {
-        animation: 150,
-        ghostClass: 'dragging',
+        animation: 200,
+        easing: "cubic-bezier(0.2, 1, 0.1, 1)",
+        forceFallback: true,
+        fallbackTolerance: 3,
+        ghostClass: 'sort-ghost',
+        chosenClass: 'sort-chosen',
+        dragClass: 'sort-drag',
+        filter: 'button',
         onEnd: (evt) => {
           const moved = currentEditProject.images.splice(evt.oldIndex, 1)[0];
           currentEditProject.images.splice(evt.newIndex, 0, moved);
@@ -864,6 +930,11 @@
       const cards = [...container.querySelectorAll('.draggable-card')];
       const statusEl = document.getElementById(`${table}-save-status`);
       
+      if (statusEl) {
+        statusEl.innerText = 'Збереження порядку...';
+        statusEl.classList.remove('hidden');
+      }
+
       const updates = cards.map((card, index) => {
         return _supabase
           .from(table)
@@ -874,7 +945,7 @@
       await Promise.all(updates);
 
       if (statusEl) {
-        statusEl.classList.remove('hidden');
+        statusEl.innerText = '✓ Порядок збережено';
         setTimeout(() => statusEl.classList.add('hidden'), 2000);
       }
     }
