@@ -7,6 +7,8 @@
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Оптимізована бібліотека для швидкого і плавного Drag-and-Drop без зависань -->
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
   
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Inter:wght@400;500;600;700&display=swap');
@@ -35,9 +37,13 @@
     }
 
     .dragging {
-      opacity: 0.35;
-      transform: scale(0.95);
+      opacity: 0.35 !important;
+      transform: scale(0.96) !important;
       border-color: #10b981 !important;
+    }
+
+    .sortable-chosen {
+      cursor: grabbing !important;
     }
   </style>
 
@@ -153,7 +159,7 @@
         <textarea id="p-desc" rows="3" required placeholder="Опиши стиль освітлення, атмосферу..." class="w-full bg-black/50 border border-zinc-800 rounded-xl p-4 text-white placeholder:text-zinc-700 outline-none focus:border-brand-accent transition"></textarea>
       </div>
 
-      <!-- ЗОНА ЗАВАНТАЖЕННЯ ЗОБРАЖЕНЬ З НАКОПИЧЕННЯМ І ХРЕСТИКАМИ -->
+      <!-- ЗОНА ЗАВАНТАЖЕННЯ ЗОБРАЖЕНЬ -->
       <div class="space-y-4">
         <div class="flex justify-between items-center">
           <div>
@@ -166,13 +172,13 @@
         <!-- DROPZONE -->
         <div id="drop-gallery" class="p-8 rounded-2xl border-2 border-dashed border-zinc-800 hover:border-brand-accent/60 bg-black/30 transition text-center cursor-pointer">
           <input type="file" id="p-gallery" accept="image/*" multiple class="hidden">
-          <svg width="36" height="36" class="text-zinc-500 mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
-          <div class="font-display font-bold text-sm text-white">Перетягни фото сюди або клікни</div>
-          <p class="text-xs text-zinc-500 font-mono mt-1">Можна додавати партіями — вони не зникатимуть</p>
+          <svg width="36" height="36" class="text-zinc-500 mx-auto mb-2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+          <div class="font-display font-bold text-sm text-white pointer-events-none">Перетягни фото сюди або клікни</div>
+          <p class="text-xs text-zinc-500 font-mono mt-1 pointer-events-none">Можна додавати партіями — вони не зникатимуть</p>
         </div>
 
         <!-- СІТКА МІНІАТЮР З ХРЕСТИКАМИ ТА ПЕРЕТЯГУВАННЯМ -->
-        <div id="new-gallery-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 pt-2"></div>
+        <div id="new-gallery-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 pt-2 min-h-[50px]"></div>
       </div>
 
       <button type="submit" id="p-submit" class="w-full py-4 bg-brand-accent hover:bg-[#0ea371] text-black font-display font-black tracking-wider uppercase rounded-xl transition-all duration-300 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]">
@@ -190,7 +196,7 @@
       <div id="drop-review" class="p-8 rounded-2xl border-2 border-dashed border-zinc-800 hover:border-brand-accent/60 bg-black/30 transition text-center cursor-pointer relative group">
         <input type="file" id="r-image" accept="image/*" class="hidden">
         
-        <div id="review-preview-box">
+        <div id="review-preview-box" class="pointer-events-none">
           <div class="w-16 h-16 mx-auto rounded-full bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center text-brand-accent mb-3">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
           </div>
@@ -199,8 +205,8 @@
         </div>
 
         <div id="review-preview-wrapper" class="hidden relative inline-block">
-          <img id="review-preview" class="max-h-64 mx-auto rounded-xl border border-zinc-700 object-contain shadow-xl">
-          <button type="button" onclick="clearReviewScreenshot(event)" class="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center font-bold text-sm shadow-lg">✕</button>
+          <img id="review-preview" class="max-h-64 mx-auto rounded-xl border border-zinc-700 object-contain shadow-xl pointer-events-none">
+          <button type="button" onclick="clearReviewScreenshot(event)" class="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center font-bold text-sm shadow-lg z-10">✕</button>
         </div>
       </div>
 
@@ -252,9 +258,7 @@
 
   </div>
 
-  <!-- ===================================================================== -->
-  <!-- 3. МОДАЛЬНЕ ВІКНО РЕДАГУВАННЯ ПРОЄКТУ (EDIT MODAL)                     -->
-  <!-- ===================================================================== -->
+  <!-- 3. МОДАЛЬНЕ ВІКНО РЕДАГУВАННЯ ПРОЄКТУ -->
   <div id="edit-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4 md:p-8 overflow-y-auto">
     <div class="glass-panel p-6 md:p-8 rounded-[28px] max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-zinc-700/80 space-y-6">
       
@@ -290,11 +294,11 @@
         <!-- DROPZONE ДЛЯ ДОДАВАННЯ ЩЕ ФОТО В ЦЕЙ ПРОЄКТ -->
         <div id="drop-edit-add" class="p-4 rounded-xl border-2 border-dashed border-zinc-800 hover:border-brand-accent bg-black/30 text-center cursor-pointer transition">
           <input type="file" id="edit-add-files" accept="image/*" multiple class="hidden">
-          <span class="text-xs font-mono text-zinc-400">+ Перетягни сюди нові фото, щоб додати їх до цього проєкту</span>
+          <span class="text-xs font-mono text-zinc-400 pointer-events-none">+ Перетягни сюди нові фото, щоб додати їх до цього проєкту</span>
         </div>
 
-        <!-- СІТКА ЗОБРАЖЕНЬ ПРОЄКТУ (З ПЕРЕТЯГУВАННЯМ ТА ХРЕСТИКАМИ) -->
-        <div id="edit-images-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 pt-2"></div>
+        <!-- СІТКА ЗОБРАЖЕНЬ ПРОЄКТУ -->
+        <div id="edit-images-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 pt-2 min-h-[50px]"></div>
       </div>
 
       <div class="flex gap-3 pt-4 border-t border-zinc-800">
@@ -391,46 +395,57 @@
     }
 
     /* ==========================================================================
-       1. СТВОРЕННЯ НОВОГО ПРОЄКТУ: НАКОПИЧЕННЯ ФОТО, ХРЕСТИКИ, СОРТУВАННЯ
+       1. СТВОРЕННЯ НОВОГО ПРОЄКТУ: ОПТИМІЗОВАНЕ ПЕРЕТЯГУВАННЯ
        ========================================================================== */
-    // Масив об'єктів: [{ id, file, url }]
     let newProjectPhotos = [];
 
     function setupDragAndDrop(dropZoneId, inputId, onFiles) {
       const zone = document.getElementById(dropZoneId);
       const input = document.getElementById(inputId);
+      let dragCounter = 0;
 
-      zone.addEventListener('click', () => input.click());
+      zone.addEventListener('click', (e) => {
+        if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+        input.click();
+      });
 
       input.addEventListener('change', (e) => {
         if (e.target.files && e.target.files.length > 0) {
           onFiles(Array.from(e.target.files));
-          input.value = ''; // скидаємо, щоб можна було вибрати той самий файл повторно
+          input.value = '';
         }
       });
 
-      ['dragenter', 'dragover'].forEach(name => {
-        zone.addEventListener(name, (e) => {
-          e.preventDefault(); e.stopPropagation();
-          zone.classList.add('drop-active');
-        });
+      zone.addEventListener('dragenter', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        dragCounter++;
+        zone.classList.add('drop-active');
       });
 
-      ['dragleave', 'drop'].forEach(name => {
-        zone.addEventListener(name, (e) => {
-          e.preventDefault(); e.stopPropagation();
+      zone.addEventListener('dragover', (e) => {
+        e.preventDefault(); e.stopPropagation();
+      });
+
+      zone.addEventListener('dragleave', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        dragCounter--;
+        if (dragCounter <= 0) {
+          dragCounter = 0;
           zone.classList.remove('drop-active');
-        });
+        }
       });
 
       zone.addEventListener('drop', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        dragCounter = 0;
+        zone.classList.remove('drop-active');
         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
           onFiles(Array.from(e.dataTransfer.files));
         }
       });
     }
 
-    // Додавання нових фото в проєкт (НАКОПИЧУЄМО)
+    // Додавання нових фото в проєкт
     setupDragAndDrop('drop-gallery', 'p-gallery', (files) => {
       const items = files.map(file => ({
         id: 'new_' + Math.random().toString(36).substr(2, 9),
@@ -441,6 +456,17 @@
       renderNewProjectPhotos();
     });
 
+    function updateCoverBadges(container) {
+      const cards = container.children;
+      for (let i = 0; i < cards.length; i++) {
+        const badge = cards[i].querySelector('.cover-badge');
+        if (badge) {
+          if (i === 0) badge.classList.remove('hidden');
+          else badge.classList.add('hidden');
+        }
+      }
+    }
+
     function renderNewProjectPhotos() {
       const list = document.getElementById('new-gallery-list');
       const counter = document.getElementById('new-images-count');
@@ -450,43 +476,40 @@
       newProjectPhotos.forEach((item, index) => {
         const card = document.createElement('div');
         card.className = 'relative group rounded-xl overflow-hidden border border-zinc-700 bg-black aspect-video cursor-grab active:cursor-grabbing select-none transition';
-        card.draggable = true;
-        card.dataset.index = index;
+        card.dataset.id = item.id;
 
         card.innerHTML = `
           <img src="${item.url}" class="w-full h-full object-cover pointer-events-none">
-          ${index === 0 ? '<span class="absolute bottom-1.5 left-1.5 bg-brand-accent text-black font-mono text-[9px] font-bold px-1.5 py-0.5 rounded shadow pointer-events-none">★ ОБКЛАДИНКА</span>' : ''}
-          <button type="button" onclick="removeNewPhoto(${index})" class="absolute top-1.5 right-1.5 bg-red-600/90 hover:bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold text-xs opacity-0 group-hover:opacity-100 transition shadow-lg" title="Видалити це фото">✕</button>
+          <span class="cover-badge absolute bottom-1.5 left-1.5 bg-brand-accent text-black font-mono text-[9px] font-bold px-1.5 py-0.5 rounded shadow pointer-events-none ${index === 0 ? '' : 'hidden'}">★ ОБКЛАДИНКА</span>
+          <button type="button" onclick="removeNewPhoto('${item.id}')" class="absolute top-1.5 right-1.5 bg-red-600/90 hover:bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold text-xs opacity-0 group-hover:opacity-100 transition shadow-lg z-10" title="Видалити це фото">✕</button>
         `;
-
-        // Drag-and-Drop всередині сітки фото
-        card.addEventListener('dragstart', (e) => {
-          e.dataTransfer.setData('text/plain', index);
-          card.classList.add('dragging');
-        });
-        card.addEventListener('dragend', () => card.classList.remove('dragging'));
-        card.addEventListener('dragover', (e) => e.preventDefault());
-        card.addEventListener('drop', (e) => {
-          e.preventDefault();
-          const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
-          const toIdx = index;
-          if (fromIdx !== toIdx) {
-            const moved = newProjectPhotos.splice(fromIdx, 1)[0];
-            newProjectPhotos.splice(toIdx, 0, moved);
-            renderNewProjectPhotos();
-          }
-        });
-
         list.appendChild(card);
+      });
+
+      // Ініціалізація плавного перетягування без лагів
+      if (list._sortable) list._sortable.destroy();
+      list._sortable = new Sortable(list, {
+        animation: 150,
+        ghostClass: 'dragging',
+        onEnd: (evt) => {
+          const moved = newProjectPhotos.splice(evt.oldIndex, 1)[0];
+          newProjectPhotos.splice(evt.newIndex, 0, moved);
+          updateCoverBadges(list);
+        }
       });
     }
 
-    function removeNewPhoto(index) {
-      newProjectPhotos.splice(index, 1);
-      renderNewProjectPhotos();
+    function removeNewPhoto(id) {
+      const idx = newProjectPhotos.findIndex(p => p.id === id);
+      if (idx !== -1) {
+        if (newProjectPhotos[idx].url.startsWith('blob:')) {
+          URL.revokeObjectURL(newProjectPhotos[idx].url); // Очищення пам'яті
+        }
+        newProjectPhotos.splice(idx, 1);
+        renderNewProjectPhotos();
+      }
     }
 
-    // Завантаження фото в Supabase Storage
     async function uploadImage(file) {
       const ext = file.name.split('.').pop();
       const fileName = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${ext}`;
@@ -496,7 +519,6 @@
       return data.publicUrl;
     }
 
-    // Відправка форми нового проєкту
     document.getElementById('project-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       if (newProjectPhotos.length === 0) {
@@ -515,7 +537,7 @@
           uploadedUrls.push(url);
         }
 
-        const thumbUrl = uploadedUrls[0]; // перше фото стає обкладинкою
+        const thumbUrl = uploadedUrls[0];
 
         const { error } = await _supabase.from('projects').insert([{
           title: document.getElementById('p-title').value,
@@ -529,6 +551,9 @@
 
         showToast('Проєкт успішно створено!');
         document.getElementById('project-form').reset();
+        newProjectPhotos.forEach(p => {
+          if (p.url.startsWith('blob:')) URL.revokeObjectURL(p.url);
+        });
         newProjectPhotos = [];
         renderNewProjectPhotos();
 
@@ -541,7 +566,7 @@
     });
 
     /* ==========================================================================
-       2. ФОРМА ВІДГУКУ (СКРІНШОТ З ХРЕСТИКОМ)
+       2. ФОРМА ВІДГУКУ
        ========================================================================== */
     let selectedReviewImg = null;
 
@@ -554,7 +579,12 @@
     });
 
     function clearReviewScreenshot(e) {
-      e.stopPropagation();
+      if (e && e.stopPropagation) e.stopPropagation();
+      const preview = document.getElementById('review-preview');
+      if (preview.src && preview.src.startsWith('blob:')) {
+        URL.revokeObjectURL(preview.src);
+      }
+      preview.src = '';
       selectedReviewImg = null;
       document.getElementById('review-preview-wrapper').classList.add('hidden');
       document.getElementById('review-preview-box').classList.remove('hidden');
@@ -596,11 +626,10 @@
     });
 
     /* ==========================================================================
-       3. КЕРУВАННЯ ПОРЯДКОМ ТА РЕДАГУВАННЯ ІСНУЮЧОГО ПРОЄКТУ (EDIT MODAL)
+       3. КЕРУВАННЯ ПОРЯДКОМ ТА РЕДАГУВАННЯ ІСНУЮЧОГО ПРОЄКТУ
        ========================================================================== */
     let allProjectsList = [];
     let currentEditProject = null; 
-    // currentEditProject.images = [{ id, url, file: null | File }]
 
     async function loadOrderItems() {
       const pList = document.getElementById('projects-order-list');
@@ -621,15 +650,14 @@
         allProjectsList.forEach(p => {
           const card = document.createElement('div');
           card.className = 'draggable-card glass-panel p-3 rounded-2xl border border-zinc-800 flex flex-col justify-between cursor-grab active:cursor-grabbing select-none transition group hover:border-brand-accent/60';
-          card.draggable = true;
           card.dataset.id = p.id;
           card.innerHTML = `
             <div class="relative w-full h-36 rounded-xl overflow-hidden mb-2 bg-black cursor-pointer" onclick="openEditModal(${p.id})">
               <img src="${p.thumb}" class="w-full h-full object-cover pointer-events-none group-hover:scale-105 transition duration-500">
-              <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+              <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center pointer-events-none">
                 <span class="bg-brand-accent text-black font-display font-bold text-xs px-3 py-1.5 rounded-lg shadow-lg">✏️ Редагувати фото</span>
               </div>
-              <div class="absolute top-2 left-2 bg-black/70 px-2 py-0.5 rounded text-[10px] font-mono text-brand-accent">::: Порядок</div>
+              <div class="absolute top-2 left-2 bg-black/70 px-2 py-0.5 rounded text-[10px] font-mono text-brand-accent pointer-events-none">::: Порядок</div>
             </div>
             <div class="flex justify-between items-center pt-1">
               <span class="font-bold text-sm text-white truncate max-w-[150px]" title="${p.title}">${p.title}</span>
@@ -641,7 +669,13 @@
           `;
           pList.appendChild(card);
         });
-        setupListReordering(pList, 'projects');
+
+        if (pList._sortable) pList._sortable.destroy();
+        pList._sortable = new Sortable(pList, {
+          animation: 150,
+          ghostClass: 'dragging',
+          onEnd: () => saveNewOrder(pList, 'projects')
+        });
       }
 
       // Відгуки
@@ -658,12 +692,11 @@
         reviews.forEach(r => {
           const card = document.createElement('div');
           card.className = 'draggable-card glass-panel p-2.5 rounded-xl border border-zinc-800 flex flex-col justify-between cursor-grab active:cursor-grabbing select-none transition';
-          card.draggable = true;
           card.dataset.id = r.id;
           card.innerHTML = `
             <div class="relative w-full h-24 rounded-lg overflow-hidden mb-2 bg-black">
               <img src="${r.image}" class="w-full h-full object-cover object-top pointer-events-none">
-              <div class="absolute top-1 left-1 bg-black/70 px-1.5 py-0.5 rounded text-[9px] font-mono text-brand-accent">::: Тягни</div>
+              <div class="absolute top-1 left-1 bg-black/70 px-1.5 py-0.5 rounded text-[9px] font-mono text-brand-accent pointer-events-none">::: Тягни</div>
             </div>
             <div class="flex justify-between items-center">
               <span class="text-xs text-zinc-300 truncate max-w-[100px]">${r.author || 'Proof'}</span>
@@ -672,11 +705,16 @@
           `;
           rList.appendChild(card);
         });
-        setupListReordering(rList, 'reviews');
+
+        if (rList._sortable) rList._sortable.destroy();
+        rList._sortable = new Sortable(rList, {
+          animation: 150,
+          ghostClass: 'dragging',
+          onEnd: () => saveNewOrder(rList, 'reviews')
+        });
       }
     }
 
-    // ВІДКРИТТЯ МОДАЛКИ РЕДАГУВАННЯ
     function openEditModal(projectId) {
       const proj = allProjectsList.find(p => p.id === projectId);
       if (!proj) return;
@@ -702,6 +740,11 @@
     }
 
     function closeEditModal() {
+      if (currentEditProject) {
+        currentEditProject.images.forEach(img => {
+          if (img.url.startsWith('blob:')) URL.revokeObjectURL(img.url);
+        });
+      }
       document.getElementById('edit-modal').classList.add('hidden');
       currentEditProject = null;
     }
@@ -729,47 +772,43 @@
       currentEditProject.images.forEach((item, index) => {
         const card = document.createElement('div');
         card.className = 'relative group rounded-xl overflow-hidden border border-zinc-700 bg-black aspect-video cursor-grab active:cursor-grabbing select-none transition';
-        card.draggable = true;
-        card.dataset.index = index;
+        card.dataset.id = item.id;
 
         card.innerHTML = `
           <img src="${item.url}" class="w-full h-full object-cover pointer-events-none">
-          ${index === 0 ? '<span class="absolute bottom-1.5 left-1.5 bg-brand-accent text-black font-mono text-[9px] font-bold px-1.5 py-0.5 rounded shadow pointer-events-none">★ ОБКЛАДИНКА</span>' : ''}
-          <button type="button" onclick="removeEditImage(${index})" class="absolute top-1.5 right-1.5 bg-red-600/90 hover:bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold text-xs opacity-0 group-hover:opacity-100 transition shadow-lg" title="Видалити це фото">✕</button>
+          <span class="cover-badge absolute bottom-1.5 left-1.5 bg-brand-accent text-black font-mono text-[9px] font-bold px-1.5 py-0.5 rounded shadow pointer-events-none ${index === 0 ? '' : 'hidden'}">★ ОБКЛАДИНКА</span>
+          <button type="button" onclick="removeEditImage('${item.id}')" class="absolute top-1.5 right-1.5 bg-red-600/90 hover:bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold text-xs opacity-0 group-hover:opacity-100 transition shadow-lg z-10" title="Видалити це фото">✕</button>
         `;
-
-        // Перетягування фото всередині проєкту
-        card.addEventListener('dragstart', (e) => {
-          e.dataTransfer.setData('text/plain', index);
-          card.classList.add('dragging');
-        });
-        card.addEventListener('dragend', () => card.classList.remove('dragging'));
-        card.addEventListener('dragover', (e) => e.preventDefault());
-        card.addEventListener('drop', (e) => {
-          e.preventDefault();
-          const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
-          const toIdx = index;
-          if (fromIdx !== toIdx) {
-            const moved = currentEditProject.images.splice(fromIdx, 1)[0];
-            currentEditProject.images.splice(toIdx, 0, moved);
-            renderEditImagesGrid();
-          }
-        });
-
         grid.appendChild(card);
+      });
+
+      if (grid._sortable) grid._sortable.destroy();
+      grid._sortable = new Sortable(grid, {
+        animation: 150,
+        ghostClass: 'dragging',
+        onEnd: (evt) => {
+          const moved = currentEditProject.images.splice(evt.oldIndex, 1)[0];
+          currentEditProject.images.splice(evt.newIndex, 0, moved);
+          updateCoverBadges(grid);
+        }
       });
     }
 
-    function removeEditImage(index) {
+    function removeEditImage(id) {
       if (currentEditProject.images.length <= 1) {
         alert('У проєкті має залишитися хоча б одне фото!');
         return;
       }
-      currentEditProject.images.splice(index, 1);
-      renderEditImagesGrid();
+      const idx = currentEditProject.images.findIndex(img => img.id === id);
+      if (idx !== -1) {
+        if (currentEditProject.images[idx].url.startsWith('blob:')) {
+          URL.revokeObjectURL(currentEditProject.images[idx].url);
+        }
+        currentEditProject.images.splice(idx, 1);
+        renderEditImagesGrid();
+      }
     }
 
-    // ЗБЕРЕЖЕННЯ ЗМІН ПРОЄКТУ
     async function saveProjectChanges() {
       if (!currentEditProject) return;
       if (currentEditProject.images.length === 0) {
@@ -786,16 +825,14 @@
 
         for (let item of currentEditProject.images) {
           if (item.file) {
-            // Нове фото — завантажуємо
             const url = await uploadImage(item.file);
             finalUrls.push(url);
           } else {
-            // Вже існуюче фото
             finalUrls.push(item.url);
           }
         }
 
-        const newThumb = finalUrls[0]; // Перше фото стає обкладинкою
+        const newThumb = finalUrls[0];
         const newTitle = document.getElementById('edit-title').value.trim();
         const newDesc = document.getElementById('edit-desc').value.trim();
 
@@ -821,49 +858,6 @@
         btn.innerText = 'Зберегти зміни';
         btn.disabled = false;
       }
-    }
-
-    // СОРТУВАННЯ КАРТОК ПРОЄКТІВ ТА ВІДГУКІВ
-    function setupListReordering(container, table) {
-      let draggedCard = null;
-
-      container.querySelectorAll('.draggable-card').forEach(card => {
-        card.addEventListener('dragstart', () => {
-          draggedCard = card;
-          setTimeout(() => card.classList.add('dragging'), 0);
-        });
-
-        card.addEventListener('dragend', async () => {
-          card.classList.remove('dragging');
-          draggedCard = null;
-          await saveNewOrder(container, table);
-        });
-      });
-
-      container.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        const afterElement = getDragAfterElement(container, e.clientX, e.clientY);
-        if (draggedCard) {
-          if (afterElement == null) {
-            container.appendChild(draggedCard);
-          } else {
-            container.insertBefore(draggedCard, afterElement);
-          }
-        }
-      });
-    }
-
-    function getDragAfterElement(container, x, y) {
-      const draggableElements = [...container.querySelectorAll('.draggable-card:not(.dragging)')];
-      return draggableElements.reduce((closest, child) => {
-        const box = child.getBoundingClientRect();
-        const offset = (x - box.left - box.width / 2) + (y - box.top - box.height / 2);
-        if (offset < 0 && offset > closest.offset) {
-          return { offset: offset, element: child };
-        } else {
-          return closest;
-        }
-      }, { offset: Number.NEGATIVE_INFINITY }).element;
     }
 
     async function saveNewOrder(container, table) {
