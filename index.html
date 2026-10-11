@@ -110,7 +110,7 @@
     <div class="absolute bottom-1/4 right-1/4 w-[40vw] h-[40vw] bg-[#5865F2]/5 rounded-full blur-[150px]"></div>
   </div>
 
-  <!-- GALLERY MODAL (ДЛЯ ПЕРЕГЛЯДУ ПРОЄКТІВ ТА СКРІНШОТІВ) -->
+  <!-- GALLERY MODAL (ДЛЯ РОБІТ І СКРІНШОТІВ ВІДГУКІВ) -->
   <div id="gallery-modal" class="fixed inset-0 z-[1000] flex items-center justify-center bg-black/90 backdrop-blur-md p-4 md:p-8">
     <button id="modal-close" class="absolute top-6 right-6 text-white/60 hover:text-white transition-colors z-[1001] interactive-card p-2 bg-white/10 rounded-full">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -122,7 +122,7 @@
 
     <div class="relative max-w-7xl max-h-[85vh] w-full flex justify-center items-center">
       <img id="gallery-img" src="" alt="Modal Preview" class="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl border border-white/10" />
-      <div id="gallery-counter" class="absolute -bottom-10 left-1/2 -translate-x-1/2 text-white/60 font-mono text-xs tracking-widest bg-black/60 px-3 py-1 rounded-full border border-white/10">
+      <div id="gallery-counter" class="absolute -bottom-10 left-1/2 -translate-x-1/2 text-white/60 font-mono text-xs tracking-widest bg-black/50 px-3 py-1 rounded-full border border-white/10">
         1 / 1
       </div>
     </div>
@@ -139,7 +139,7 @@
     </a>
     <div class="hidden md:flex gap-[30px]">
       <a href="#work" class="text-brand-text-dim no-underline text-[13px] uppercase tracking-widest transition-colors duration-300 hover:text-brand-accent interactive-card">Projects</a>
-      <a href="#reviews" class="text-brand-text-dim no-underline text-[13px] uppercase tracking-widest transition-colors duration-300 hover:text-brand-accent interactive-card">Feedback</a>
+      <a href="#reviews" class="text-brand-text-dim no-underline text-[13px] uppercase tracking-widest transition-colors duration-300 hover:text-brand-accent interactive-card">Reviews</a>
       <a href="#contact" class="text-brand-text-dim no-underline text-[13px] uppercase tracking-widest transition-colors duration-300 hover:text-brand-accent interactive-card">Contact</a>
     </div>
   </nav>
@@ -206,23 +206,15 @@
     </button>
   </div>
 
-  <!-- REVIEWS SECTION (VOUCH WALL) -->
-  <section class="py-[120px] px-6 md:px-[8%] relative" id="reviews">
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl h-full bg-brand-accent/5 blur-[160px] pointer-events-none"></div>
-
-    <div class="text-center mb-14 relative z-10">
-      <p class="text-brand-accent tracking-[4px] font-mono text-xs uppercase mb-3">Proof of Experience</p>
-      <h2 class="font-display text-4xl md:text-[3.5rem] uppercase leading-none">
-        Client <span class="text-brand-accent">Feedback</span>
-      </h2>
-      <p class="text-brand-text-dim text-sm max-w-md mx-auto mt-3">
-        Справжні скріншоти виконаних замовлень та відгуків із Discord
-      </p>
-    </div>
+  <!-- REVIEWS SECTION -->
+  <section class="py-[100px] px-6 md:px-[10%] relative overflow-hidden" id="reviews">
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-full bg-brand-accent/5 blur-[120px] pointer-events-none"></div>
+    <h2 class="font-display text-4xl md:text-[3.5rem] text-center mb-16 uppercase relative z-10">
+      Client <span class="text-brand-accent">Feedback</span>
+    </h2>
     
-    <!-- Щільна стіна скріншотів (1 колонка на мобільних, 2 на планшетах, 3 на десктопі) -->
-    <div id="reviews-grid" class="columns-1 sm:columns-2 lg:columns-3 gap-4 max-w-7xl mx-auto relative z-10">
-      <div class="text-center py-10 text-brand-text-dim">Завантаження відгуків...</div>
+    <div id="reviews-grid" class="grid grid-cols-1 md:grid-cols-2 gap-[30px] relative z-10">
+      <div class="col-span-full text-center py-8 text-brand-text-dim">Завантаження відгуків...</div>
     </div>
   </section>
 
@@ -268,7 +260,7 @@
 
     async function loadDataFromSupabase() {
       try {
-        // Проєкти: сортуємо за sort_order, потім за датою створення
+        // Проєкти: сортуємо спочатку за sort_order (як виставили в адмінці), потім за created_at
         const { data: dbProjects, error: pError } = await _supabase
           .from('projects')
           .select('*')
@@ -291,7 +283,7 @@
 
       } catch (err) {
         console.error('Помилка Supabase:', err);
-        projectsGrid.innerHTML = '<div class="col-span-full text-center text-red-400">Помилка завантаження даних.</div>';
+        projectsGrid.innerHTML = '<div class="col-span-full text-center text-red-400">Помилка завантаження даних. Перевірте з\'єднання.</div>';
       }
     }
 
@@ -299,7 +291,7 @@
       projectsGrid.innerHTML = '';
 
       if (projects.length === 0) {
-        projectsGrid.innerHTML = '<div class="col-span-full text-center text-brand-text-dim">Роботи ще не додані. Натисніть на логотип MISA., щоб додати.</div>';
+        projectsGrid.innerHTML = '<div class="col-span-full text-center text-brand-text-dim">Роботи ще не додані. Натисніть на логотип MISA., щоб перейти в адмінку.</div>';
         showMoreContainer.style.display = 'none';
         return;
       }
@@ -344,32 +336,52 @@
       const container = document.getElementById('reviews-grid');
       container.innerHTML = '';
 
-      // Фільтруємо лише відгуки, де є завантажений скріншот
-      const validReviews = reviews.filter(r => r.image);
-
-      if (validReviews.length === 0) {
-        container.innerHTML = '<div class="text-center text-brand-text-dim py-12 col-span-full">Відгуків поки немає. Завантажте скріншоти через адмін-панель.</div>';
+      if (reviews.length === 0) {
+        container.innerHTML = '<div class="col-span-full text-center text-brand-text-dim">Відгуків поки немає.</div>';
         return;
       }
 
-      validReviews.forEach(r => {
-        const imgArrayString = JSON.stringify([r.image]).replace(/"/g, '&quot;');
-
-        container.innerHTML += `
-          <div class="break-inside-avoid mb-4 group relative rounded-2xl overflow-hidden border border-white/10 bg-[#121214] hover:border-brand-accent/60 transition-all duration-300 hover:shadow-[0_0_25px_rgba(16,185,129,0.2)] interactive-card cursor-pointer" onclick="openGallery(${imgArrayString})">
-            
-            <!-- Чистий скріншот без рамок всередині -->
-            <img src="${r.image}" alt="Client Review Proof" loading="lazy" class="w-full h-auto block object-cover transition-transform duration-500 group-hover:scale-[1.02]">
-            
-            <!-- Затемнення та кнопка перегляду при наведенні -->
-            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
-              <div class="w-10 h-10 rounded-full bg-black/85 border border-brand-accent/50 text-brand-accent flex items-center justify-center shadow-xl transform scale-75 group-hover:scale-100 transition-transform duration-300">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+      reviews.forEach(r => {
+        // ЯКЩО ВІДГУК ЗІ СКРІНШОТОМ (з нової адмінки):
+        if (r.image) {
+          const imgArrayString = JSON.stringify([r.image]).replace(/"/g, '&quot;');
+          container.innerHTML += `
+            <div class="project-card group p-5 bg-brand-surface/70 backdrop-blur-xl border border-brand-border rounded-[24px] transition-all duration-300 interactive-card cursor-pointer flex flex-col justify-between" onclick="openGallery(${imgArrayString})">
+              <div class="relative w-full rounded-2xl overflow-hidden bg-black/60 border border-white/5 mb-4 flex items-center justify-center min-h-[160px] p-2">
+                <img src="${r.image}" alt="${r.author || 'Review'}" class="w-full h-auto max-h-[340px] object-contain transition-transform duration-500 group-hover:scale-[1.02]">
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                  <span class="bg-black/80 text-brand-accent text-xs font-mono px-3 py-1.5 rounded-full border border-brand-accent/40 shadow-lg flex items-center gap-1.5">
+                    🔍 Відкрити скріншот
+                  </span>
+                </div>
+              </div>
+              <div class="flex items-center justify-between px-2 text-xs">
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-brand-accent animate-pulse"></span>
+                  <span class="font-bold text-white text-sm">— ${r.author || 'Discord Client'}</span>
+                </div>
+                <span class="text-brand-text-dim font-mono text-[11px]">Discord Vouch ✓</span>
               </div>
             </div>
-
-          </div>
-        `;
+          `;
+        } 
+        // ЯКЩО СТАРИЙ ТЕКСТОВИЙ ВІДГУК:
+        else {
+          const initial = r.author ? r.author.trim().charAt(0).toUpperCase() : 'C';
+          container.innerHTML += `
+            <div class="project-card group p-8 md:p-10 bg-brand-surface/70 backdrop-blur-xl border border-brand-border rounded-[24px] transition-all duration-300 interactive-card">
+              <div class="text-brand-accent text-5xl font-display opacity-50 mb-4 leading-none">"</div>
+              <p class="text-brand-text-dim mb-8 text-[1.1rem] leading-relaxed group-hover:text-white transition-colors">${r.text || ''}</p>
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-brand-border flex items-center justify-center font-bold text-brand-accent">${initial}</div>
+                <div>
+                  <div class="font-bold text-white">— ${r.author || 'Client'}</div>
+                  <div class="text-brand-text-dim text-sm">${r.role || ''}</div>
+                </div>
+              </div>
+            </div>
+          `;
+        }
       });
     }
 
@@ -430,7 +442,7 @@
       currentIndex = 0;
       updateGalleryImage();
       
-      // Якщо фото лише одне (скріншот відгуку) — стрілки навігації та лічильник ховаються
+      // Якщо всього 1 картинка (наприклад, скріншот відгуку) — ховаємо стрілки навігації
       btnNext.style.display = images.length <= 1 ? 'none' : 'flex';
       btnPrev.style.display = images.length <= 1 ? 'none' : 'flex';
       counter.style.display = images.length <= 1 ? 'none' : 'block';
